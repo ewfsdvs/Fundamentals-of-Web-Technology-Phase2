@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Details - Premium Motors</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --background: #f8fafc;
+            --card-background: #ffffff;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background-color: var(--background);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .navbar-brand svg {
+            margin-right: 0.5rem;
+        }
+
+        .navbar-menu {
+            display: flex;
+            list-style: none;
+        }
+
+        .navbar-menu li {
+            margin-left: 1.5rem;
+        }
+
+        .navbar-menu a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .navbar-menu a.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .navbar-auth {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+        }
+
+        .car-detail {
+            padding: 2rem 0;
+        }
+
+        .car-detail-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .car-image {
+            background-color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .car-image img {
+            max-width: 100%;
+            max-height: 400px;
+            object-fit: contain;
+        }
+
+        .car-info {
+            padding: 2rem;
+        }
+
+        .car-info h1 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .car-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .meta-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .meta-value {
+            font-weight: 500;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-badge.excellent {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .status-badge.good {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .status-badge.medium {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .car-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+        }
+
+        .car-description {
+            margin-bottom: 2rem;
+        }
+
+        .car-description h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .car-description p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .related-cars {
+            margin-top: 4rem;
+        }
+
+        .related-cars h2 {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .car-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .car-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .car-card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .car-card-content {
+            padding: 1.5rem;
+        }
+
+        .car-card-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .car-card-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .car-card-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .navbar-menu {
+                margin-top: 1rem;
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .navbar-menu li {
+                margin-left: 0;
+                margin-bottom: 0.5rem;
+            }
+
+            .navbar-auth {
+                margin-top: 1rem;
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .car-detail-container {
+                grid-template-columns: 1fr;
+            }
+
+            .car-image {
+                padding: 1rem;
+            }
+
+            .car-info {
+                padding: 1.5rem;
+            }
+
+            .car-info h1 {
+                font-size: 1.5rem;
+            }
+
+            .car-meta {
+                gap: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-buttons .btn {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="8" fill="#2563eb"/>
+                    <path d="M10 25L20 12L30 25H10Z" fill="white"/>
+                    <circle cx="20" cy="25" r="3" fill="#2563eb"/>
+                </svg>
+                <span>Premium Motors</span>
+            </a>
+            <ul class="navbar-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="search.html">Search Cars</a></li>
+                <li><a href="add-car.html">Sell Your Car</a></li>
+                <li><a href="register.html">Register</a></li>
+                <li><a href="login.html">Login</a></li>
+            </ul>
+            <div class="navbar-auth">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <a href="javascript:history.back()" class="back-link">← Back to Search</a>
+
+        <div class="car-detail">
+            <div class="car-detail-container">
+                <div class="car-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzI1NjNlYiIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+Qk1XPC90ZXh0Pjwvc3ZnPg==" alt="BMW 3 Series 320i">
+                </div>
+                <div class="car-info">
+                    <h1>BMW 3 Series 320i</h1>
+                    <div class="car-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Brand</span>
+                            <span class="meta-value">BMW</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Year</span>
+                            <span class="meta-value">2022</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Mileage</span>
+                            <span class="meta-value">15,000 km</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Condition</span>
+                            <span class="status-badge excellent">Excellent</span>
+                        </div>
+                    </div>
+                    <div class="car-price">¥28.5 万</div>
+                    <div class="car-description">
+                        <h2>Description</h2>
+                        <p>Excellent condition, low mileage, full service history. Leather seats, sunroof, parking sensors. This BMW 3 Series 320i is a perfect combination of luxury and performance. It features a smooth automatic transmission, responsive handling, and a comfortable interior. Ideal for both daily commuting and weekend getaways.</p>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary">Contact Seller</button>
+                        <button class="btn btn-outline">Save to Favorites</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="related-cars">
+            <h2>Related Cars</h2>
+            <div class="car-grid">
+                <div class="car-card">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzY0NzQ4YiIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+TVQ8L3RleHQ+PC9zdmc+" alt="Mercedes-Benz C-Class" class="car-card-image">
+                    <div class="car-card-content">
+                        <h3 class="car-card-title">Mercedes-Benz C-Class C200</h3>
+                        <div class="car-card-info">
+                            <span>Mercedes-Benz</span>
+                            <span>2021</span>
+                            <span>25,000 km</span>
+                            <span>Good</span>
+                        </div>
+                        <div class="car-card-price">
+                            ¥32.0 万
+                        </div>
+                    </div>
+                </div>
+                <div class="car-card">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzIyNjdlZiIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGlpdGU+QVVESSA8L3RleHQ+PC9zdmc+" alt="Audi A4" class="car-card-image">
+                    <div class="car-card-content">
+                        <h3 class="car-card-title">Audi A4 40 TFSI</h3>
+                        <div class="car-card-info">
+                            <span>Audi</span>
+                            <span>2023</span>
+                            <span>8,000 km</span>
+                            <span>Excellent</span>
+                        </div>
+                        <div class="car-card-price">
+                            ¥35.8 万
+                        </div>
+                    </div>
+                </div>
+                <div class="car-card">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2VmNjQ0NCIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGlpdGU+VFlPVk9UPC90ZXh0Pjwvc3ZnPg==" alt="Toyota Camry" class="car-card-image">
+                    <div class="car-card-content">
+                        <h3 class="car-card-title">Toyota Camry 2.5L</h3>
+                        <div class="car-card-info">
+                            <span>Toyota</span>
+                            <span>2020</span>
+                            <span>45,000 km</span>
+                            <span>Good</span>
+                        </div>
+                        <div class="car-card-price">
+                            ¥18.5 万
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
