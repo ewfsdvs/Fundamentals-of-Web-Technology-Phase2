@@ -1,5 +1,3 @@
-// Phase 1 - Member 2 (李娜) - User Authentication JS
-
 // Registration form validation
 function validateRegisterForm() {
     let isValid = true;
