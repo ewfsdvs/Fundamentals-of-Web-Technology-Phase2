@@ -1,6 +1,4 @@
-// Phase 1 - Member 4 (陈明) - Search Functionality JS
 
-// Mock car data for phase 1
 const mockCars = [
     {
         id: 'car_001',
