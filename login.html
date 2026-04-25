@@ -64,6 +64,14 @@
             margin-right: 0.5rem;
         }
 
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
         .navbar-menu {
             display: flex;
             list-style: none;
@@ -77,8 +85,10 @@
             text-decoration: none;
             color: var(--text-primary);
             font-weight: 500;
+            transition: color 0.3s ease;
         }
 
+        .navbar-menu a:hover,
         .navbar-menu a.active {
             color: var(--primary-color);
             border-bottom: 2px solid var(--primary-color);
@@ -104,10 +114,19 @@
             color: white;
         }
 
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
         .btn-outline {
             background-color: transparent;
             color: var(--primary-color);
             border: 1px solid var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .auth-container {
@@ -149,6 +168,7 @@
             border: 1px solid var(--border);
             border-radius: 4px;
             font-size: 1rem;
+            transition: border-color 0.3s ease;
         }
 
         .form-group input:focus {
@@ -192,6 +212,18 @@
             border-radius: 4px;
             margin-bottom: 1.5rem;
             text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .alert-success {
@@ -207,26 +239,50 @@
         }
 
         @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
             .navbar-container {
-                flex-direction: column;
-                align-items: flex-start;
+                flex-direction: row;
+                align-items: center;
             }
 
             .navbar-menu {
-                margin-top: 1rem;
-                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
                 width: 100%;
+                background-color: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                flex-direction: column;
+                padding: 1rem;
+                display: none;
+            }
+
+            .navbar-menu.active {
+                display: flex;
+                animation: slideDown 0.3s ease;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
             .navbar-menu li {
                 margin-left: 0;
-                margin-bottom: 0.5rem;
+                margin-bottom: 1rem;
             }
 
             .navbar-auth {
-                margin-top: 1rem;
-                width: 100%;
-                justify-content: space-between;
+                margin-left: auto;
             }
 
             .auth-container {
@@ -247,9 +303,13 @@
                 </svg>
                 <span>Premium Motors</span>
             </a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span>&#9776;</span>
+            </button>
             <ul class="navbar-menu">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="search.html">Search Cars</a></li>
+                <li><a href="add-car.html">Sell Your Car</a></li>
                 <li><a href="register.html">Register</a></li>
                 <li><a href="login.html" class="active">Login</a></li>
             </ul>
@@ -292,11 +352,73 @@
     </div>
 
     <script>
+        const App = {
+            STORAGE_KEYS: {
+                USERS: 'used_car_users',
+                CURRENT_USER: 'used_car_current_user'
+            },
+
+            getStorageItem: function(key, defaultValue = null) {
+                try {
+                    const item = localStorage.getItem(key);
+                    return item ? JSON.parse(item) : defaultValue;
+                } catch (e) {
+                    console.error('Storage error:', e);
+                    return defaultValue;
+                }
+            },
+
+            setStorageItem: function(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.error('Storage error:', e);
+                    return false;
+                }
+            },
+
+            loginUser: function(emailOrUsername, password) {
+                const users = this.getStorageItem(this.STORAGE_KEYS.USERS, []);
+                const user = users.find(u =>
+                    (u.email === emailOrUsername || u.username === emailOrUsername) &&
+                    u.password === password
+                );
+                if (user) {
+                    const userWithoutPassword = { ...user };
+                    delete userWithoutPassword.password;
+                    this.setStorageItem(this.STORAGE_KEYS.CURRENT_USER, userWithoutPassword);
+                    return { success: true, user: userWithoutPassword };
+                }
+                return { success: false, message: 'Invalid credentials' };
+            },
+
+            showAlert: function(message, type = 'success') {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type}`;
+                alertDiv.textContent = message;
+                const form = document.getElementById('loginForm');
+                form.parentNode.insertBefore(alertDiv, form);
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 3000);
+            }
+        };
+
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             if (validateForm()) {
-                alert('Login successful!');
-                window.location.href = 'index.html';
+                const emailOrUsername = document.getElementById('emailOrUsername').value;
+                const password = document.getElementById('password').value;
+                const result = App.loginUser(emailOrUsername, password);
+                if (result.success) {
+                    App.showAlert('Login successful!');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                } else {
+                    App.showAlert(result.message, 'error');
+                }
             }
         });
 
@@ -321,6 +443,11 @@
             }
 
             return isValid;
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.navbar-menu');
+            menu.classList.toggle('active');
         }
     </script>
 </body>

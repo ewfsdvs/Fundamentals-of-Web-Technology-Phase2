@@ -64,6 +64,14 @@
             margin-right: 0.5rem;
         }
 
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
         .navbar-menu {
             display: flex;
             list-style: none;
@@ -77,8 +85,10 @@
             text-decoration: none;
             color: var(--text-primary);
             font-weight: 500;
+            transition: color 0.3s ease;
         }
 
+        .navbar-menu a:hover,
         .navbar-menu a.active {
             color: var(--primary-color);
             border-bottom: 2px solid var(--primary-color);
@@ -104,10 +114,19 @@
             color: white;
         }
 
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
         .btn-outline {
             background-color: transparent;
             color: var(--primary-color);
             border: 1px solid var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .auth-container {
@@ -149,6 +168,7 @@
             border: 1px solid var(--border);
             border-radius: 4px;
             font-size: 1rem;
+            transition: border-color 0.3s ease;
         }
 
         .form-group input:focus {
@@ -198,6 +218,18 @@
             border-radius: 4px;
             margin-bottom: 1.5rem;
             text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .alert-success {
@@ -213,26 +245,50 @@
         }
 
         @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
             .navbar-container {
-                flex-direction: column;
-                align-items: flex-start;
+                flex-direction: row;
+                align-items: center;
             }
 
             .navbar-menu {
-                margin-top: 1rem;
-                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
                 width: 100%;
+                background-color: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                flex-direction: column;
+                padding: 1rem;
+                display: none;
+            }
+
+            .navbar-menu.active {
+                display: flex;
+                animation: slideDown 0.3s ease;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
             .navbar-menu li {
                 margin-left: 0;
-                margin-bottom: 0.5rem;
+                margin-bottom: 1rem;
             }
 
             .navbar-auth {
-                margin-top: 1rem;
-                width: 100%;
-                justify-content: space-between;
+                margin-left: auto;
             }
 
             .auth-container {
@@ -253,9 +309,13 @@
                 </svg>
                 <span>Premium Motors</span>
             </a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span>&#9776;</span>
+            </button>
             <ul class="navbar-menu">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="search.html">Search Cars</a></li>
+                <li><a href="add-car.html">Sell Your Car</a></li>
                 <li><a href="register.html" class="active">Register</a></li>
                 <li><a href="login.html">Login</a></li>
             </ul>
@@ -316,11 +376,101 @@
     </div>
 
     <script>
+        const App = {
+            STORAGE_KEYS: {
+                USERS: 'used_car_users'
+            },
+
+            validateEmail: function(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            },
+
+            validatePhone: function(phone) {
+                const re = /^1[3-9]\d{9}$/;
+                return re.test(phone);
+            },
+
+            validatePassword: function(password) {
+                return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password);
+            },
+
+            validateUsername: function(username) {
+                return /^[a-zA-Z0-9_]{4,20}$/.test(username);
+            },
+
+            generateId: function(prefix = 'id') {
+                return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            },
+
+            getStorageItem: function(key, defaultValue = null) {
+                try {
+                    const item = localStorage.getItem(key);
+                    return item ? JSON.parse(item) : defaultValue;
+                } catch (e) {
+                    console.error('Storage error:', e);
+                    return defaultValue;
+                }
+            },
+
+            setStorageItem: function(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.error('Storage error:', e);
+                    return false;
+                }
+            },
+
+            registerUser: function(userData) {
+                const users = this.getStorageItem(this.STORAGE_KEYS.USERS, []);
+                const existingUser = users.find(user =>
+                    user.email === userData.email || user.username === userData.username
+                );
+                if (existingUser) {
+                    return { success: false, message: 'User already exists' };
+                }
+                const newUser = {
+                    ...userData,
+                    id: this.generateId('user'),
+                    createdAt: new Date().toISOString()
+                };
+                users.push(newUser);
+                this.setStorageItem(this.STORAGE_KEYS.USERS, users);
+                return { success: true, user: newUser };
+            },
+
+            showAlert: function(message, type = 'success') {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type}`;
+                alertDiv.textContent = message;
+                const form = document.getElementById('registerForm');
+                form.parentNode.insertBefore(alertDiv, form);
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 3000);
+            }
+        };
+
         document.getElementById('registerForm').addEventListener('submit', function(e) {
             e.preventDefault();
             if (validateForm()) {
-                alert('Registration successful!');
-                window.location.href = 'login.html';
+                const userData = {
+                    username: document.getElementById('username').value,
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value,
+                    phone: document.getElementById('phone').value
+                };
+                const result = App.registerUser(userData);
+                if (result.success) {
+                    App.showAlert('Registration successful! Please login.');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500);
+                } else {
+                    App.showAlert(result.message, 'error');
+                }
             }
         });
 
@@ -332,26 +482,22 @@
 
             // Validate username
             const username = document.getElementById('username').value;
-            if (!username || username.length < 4 || username.length > 20) {
-                document.getElementById('usernameError').textContent = 'Username must be between 4 and 20 characters';
+            if (!App.validateUsername(username)) {
+                document.getElementById('usernameError').textContent = 'Username must be 4-20 characters and only contain letters, numbers, and underscores';
                 isValid = false;
             }
 
             // Validate email
             const email = document.getElementById('email').value;
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) {
+            if (!App.validateEmail(email)) {
                 document.getElementById('emailError').textContent = 'Please enter a valid email address';
                 isValid = false;
             }
 
             // Validate password
             const password = document.getElementById('password').value;
-            if (!password || password.length < 8) {
-                document.getElementById('passwordError').textContent = 'Password must be at least 8 characters';
-                isValid = false;
-            } else if (!/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/[0-9]/.test(password)) {
-                document.getElementById('passwordError').textContent = 'Password must contain uppercase, lowercase, and number';
+            if (!App.validatePassword(password)) {
+                document.getElementById('passwordError').textContent = 'Password must be at least 8 characters and contain uppercase, lowercase, and number';
                 isValid = false;
             }
 
@@ -364,13 +510,17 @@
 
             // Validate phone
             const phone = document.getElementById('phone').value;
-            const phoneRegex = /^1[3-9]\d{9}$/;
-            if (!phoneRegex.test(phone)) {
+            if (!App.validatePhone(phone)) {
                 document.getElementById('phoneError').textContent = 'Please enter a valid Chinese phone number';
                 isValid = false;
             }
 
             return isValid;
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.navbar-menu');
+            menu.classList.toggle('active');
         }
     </script>
 </body>
