@@ -64,6 +64,14 @@
             margin-right: 0.5rem;
         }
 
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
         .navbar-menu {
             display: flex;
             list-style: none;
@@ -77,8 +85,10 @@
             text-decoration: none;
             color: var(--text-primary);
             font-weight: 500;
+            transition: color 0.3s ease;
         }
 
+        .navbar-menu a:hover,
         .navbar-menu a.active {
             color: var(--primary-color);
             border-bottom: 2px solid var(--primary-color);
@@ -104,10 +114,19 @@
             color: white;
         }
 
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
         .btn-outline {
             background-color: transparent;
             color: var(--primary-color);
             border: 1px solid var(--primary-color);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: white;
         }
 
         .form-container {
@@ -161,6 +180,7 @@
             border: 1px solid var(--border);
             border-radius: 4px;
             font-size: 1rem;
+            transition: border-color 0.3s ease;
         }
 
         .form-group input:focus,
@@ -210,6 +230,15 @@
             margin-bottom: 1rem;
         }
 
+        .image-preview {
+            margin-top: 1rem;
+            max-width: 100%;
+            max-height: 200px;
+            object-fit: contain;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
         .form-actions {
             margin-top: 2rem;
             text-align: center;
@@ -225,6 +254,18 @@
             border-radius: 4px;
             margin-bottom: 1.5rem;
             text-align: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .alert-success {
@@ -240,26 +281,50 @@
         }
 
         @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+
             .navbar-container {
-                flex-direction: column;
-                align-items: flex-start;
+                flex-direction: row;
+                align-items: center;
             }
 
             .navbar-menu {
-                margin-top: 1rem;
-                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
                 width: 100%;
+                background-color: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                flex-direction: column;
+                padding: 1rem;
+                display: none;
+            }
+
+            .navbar-menu.active {
+                display: flex;
+                animation: slideDown 0.3s ease;
+            }
+
+            @keyframes slideDown {
+                from {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
             }
 
             .navbar-menu li {
                 margin-left: 0;
-                margin-bottom: 0.5rem;
+                margin-bottom: 1rem;
             }
 
             .navbar-auth {
-                margin-top: 1rem;
-                width: 100%;
-                justify-content: space-between;
+                margin-left: auto;
             }
 
             .form-container {
@@ -284,6 +349,9 @@
                 </svg>
                 <span>Premium Motors</span>
             </a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span>&#9776;</span>
+            </button>
             <ul class="navbar-menu">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="search.html">Search Cars</a></li>
@@ -371,6 +439,7 @@
                                 <p>Click to upload image</p>
                                 <p style="color: var(--text-secondary); font-size: 0.9rem;">Supports JPG, PNG, GIF</p>
                             </label>
+                            <img id="imagePreview" class="image-preview" style="display: none;" alt="Preview">
                         </div>
                         <div class="error" id="imageError"></div>
                     </div>
@@ -384,11 +453,120 @@
     </div>
 
     <script>
+        const App = {
+            STORAGE_KEYS: {
+                CARS: 'used_car_cars',
+                CURRENT_USER: 'used_car_current_user'
+            },
+
+            validateYear: function(year) {
+                const currentYear = new Date().getFullYear();
+                return year >= 2000 && year <= currentYear;
+            },
+
+            validateMileage: function(mileage) {
+                return mileage > 0 && mileage < 500000;
+            },
+
+            validatePrice: function(price) {
+                return price > 0 && price < 10000;
+            },
+
+            generateId: function(prefix = 'id') {
+                return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            },
+
+            getStorageItem: function(key, defaultValue = null) {
+                try {
+                    const item = localStorage.getItem(key);
+                    return item ? JSON.parse(item) : defaultValue;
+                } catch (e) {
+                    console.error('Storage error:', e);
+                    return defaultValue;
+                }
+            },
+
+            setStorageItem: function(key, value) {
+                try {
+                    localStorage.setItem(key, JSON.stringify(value));
+                    return true;
+                } catch (e) {
+                    console.error('Storage error:', e);
+                    return false;
+                }
+            },
+
+            addCar: function(carData) {
+                const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+                const newCar = {
+                    ...carData,
+                    id: this.generateId('car'),
+                    sellerId: 'user_001', // Default seller ID for demo
+                    createdAt: new Date().toISOString()
+                };
+                cars.unshift(newCar);
+                this.setStorageItem(this.STORAGE_KEYS.CARS, cars);
+                return newCar;
+            },
+
+            showAlert: function(message, type = 'success') {
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type}`;
+                alertDiv.textContent = message;
+                const form = document.getElementById('addCarForm');
+                form.parentNode.insertBefore(alertDiv, form);
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 3000);
+            },
+
+            requireAuth: function() {
+                const currentUser = this.getStorageItem(this.STORAGE_KEYS.CURRENT_USER);
+                if (!currentUser) {
+                    this.showAlert('Please login first!', 'error');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500);
+                    return false;
+                }
+                return true;
+            }
+        };
+
         document.getElementById('addCarForm').addEventListener('submit', function(e) {
             e.preventDefault();
             if (validateForm()) {
-                alert('Car listed successfully!');
-                window.location.href = 'index.html';
+                if (!App.requireAuth()) return;
+                
+                const carData = {
+                    name: document.getElementById('name').value,
+                    brand: document.getElementById('brand').value,
+                    year: parseInt(document.getElementById('year').value),
+                    mileage: parseInt(document.getElementById('mileage').value),
+                    price: parseFloat(document.getElementById('price').value),
+                    condition: document.getElementById('condition').value,
+                    description: document.getElementById('description').value,
+                    image: document.getElementById('imagePreview').src
+                };
+                
+                const newCar = App.addCar(carData);
+                App.showAlert('Car listed successfully!');
+                setTimeout(() => {
+                    window.location.href = `car-detail.html?id=${newCar.id}`;
+                }, 1500);
+            }
+        });
+
+        document.getElementById('image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
             }
         });
 
@@ -413,23 +591,23 @@
             }
 
             // Validate year
-            const year = document.getElementById('year').value;
-            const currentYear = new Date().getFullYear();
-            if (!year || year < 2000 || year > currentYear) {
+            const year = parseInt(document.getElementById('year').value);
+            if (!App.validateYear(year)) {
+                const currentYear = new Date().getFullYear();
                 document.getElementById('yearError').textContent = `Year must be between 2000 and ${currentYear}`;
                 isValid = false;
             }
 
             // Validate mileage
-            const mileage = document.getElementById('mileage').value;
-            if (!mileage || mileage <= 0 || mileage > 500000) {
+            const mileage = parseInt(document.getElementById('mileage').value);
+            if (!App.validateMileage(mileage)) {
                 document.getElementById('mileageError').textContent = 'Mileage must be between 1 and 500000 km';
                 isValid = false;
             }
 
             // Validate price
-            const price = document.getElementById('price').value;
-            if (!price || price <= 0 || price > 10000) {
+            const price = parseFloat(document.getElementById('price').value);
+            if (!App.validatePrice(price)) {
                 document.getElementById('priceError').textContent = 'Price must be between 0.1 and 10000万';
                 isValid = false;
             }
@@ -456,6 +634,11 @@
             }
 
             return isValid;
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.navbar-menu');
+            menu.classList.toggle('active');
         }
     </script>
 </body>
