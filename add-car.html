@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Car - Premium Motors</title>
+    <link rel="stylesheet" href="css/styles-main.css">
+    <link rel="stylesheet" href="css/styles-auth.css">
+    <link rel="stylesheet" href="css/styles-car.css">
+    <link rel="stylesheet" href="css/styles-search.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="8" fill="#2563eb"/>
+                    <path d="M10 25L20 12L30 25H10Z" fill="white"/>
+                    <circle cx="20" cy="25" r="3" fill="#2563eb"/>
+                </svg>
+                <span>Premium Motors</span>
+            </a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span>&#9776;</span>
+            </button>
+            <ul class="navbar-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="search.html">Search Cars</a></li>
+                <li><a href="add-car.html">Sell Your Car</a></li>
+                <li><a href="search.html#featured">Featured</a></li>
+            </ul>
+            <div class="navbar-auth">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container" style="max-width: 800px;">
+            <div class="page-header">
+                <h1>List Your Car for Sale</h1>
+                <p>Fill in the details below to create your vehicle listing</p>
+            </div>
+
+            <div id="alertSuccess" class="alert alert-success"></div>
+            <div id="alertError" class="alert alert-error"></div>
+
+            <form id="addCarForm" class="card">
+                <h2 class="card-title">Vehicle Information</h2>
+
+                <div class="form-group">
+                    <label for="name">Vehicle Name / Model *</label>
+                    <input type="text" id="name" name="name" placeholder="e.g., BMW 3 Series 320i" required>
+                    <span class="error-message" id="nameError">Please enter a valid vehicle name (at least 3 characters)</span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="brand">Brand *</label>
+                        <select id="brand" name="brand" required>
+                            <option value="">Select Brand</option>
+                            <option value="BMW">BMW</option>
+                            <option value="Mercedes-Benz">Mercedes-Benz</option>
+                            <option value="Audi">Audi</option>
+                            <option value="Toyota">Toyota</option>
+                            <option value="Honda">Honda</option>
+                            <option value="Tesla">Tesla</option>
+                            <option value="Volkswagen">Volkswagen</option>
+                            <option value="Ford">Ford</option>
+                            <option value="Nissan">Nissan</option>
+                            <option value="Hyundai">Hyundai</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span class="error-message" id="brandError">Please select a brand</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="year">Year *</label>
+                        <select id="year" name="year" required>
+                            <option value="">Select Year</option>
+                        </select>
+                        <span class="error-message" id="yearError">Please select a valid year</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="mileage">Mileage (km) *</label>
+                        <input type="number" id="mileage" name="mileage" placeholder="e.g., 25000" min="0" max="500000" required>
+                        <span class="error-message" id="mileageError">Please enter a valid mileage (0-500,000 km)</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Price (万元) *</label>
+                        <input type="number" id="price" name="price" placeholder="e.g., 25.8" min="0" max="9999" step="0.1" required>
+                        <span class="error-message" id="priceError">Please enter a valid price (0.1-9999 万元)</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="condition">Condition Rating *</label>
+                    <select id="condition" name="condition" required>
+                        <option value="">Select Condition</option>
+                        <option value="excellent">Excellent - Like new condition</option>
+                        <option value="good">Good - Minor wear, fully functional</option>
+                        <option value="medium">Medium - Visible wear, functional</option>
+                    </select>
+                    <span class="error-message" id="conditionError">Please select a condition rating</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Vehicle Description *</label>
+                    <textarea id="description" name="description" placeholder="Provide detailed information about your vehicle including features, maintenance history, and any notable aspects..." required></textarea>
+                    <span class="error-message" id="descriptionError">Please enter a description (at least 20 characters)</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Vehicle Image</label>
+                    <div class="image-upload" id="imageUpload">
+                        <input type="file" id="carImage" name="carImage" accept="image/*">
+                        <div id="uploadPlaceholder">
+                            <p style="font-size: 2rem; margin-bottom: 0.5rem;">📷</p>
+                            <p>Click or drag to upload vehicle image</p>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Supports: JPG, PNG (Max 5MB)</p>
+                        </div>
+                        <img id="imagePreview" class="image-upload-preview hidden" alt="Vehicle Preview">
+                    </div>
+                    <input type="hidden" id="imageData" name="imageData">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1; padding: 1rem;">List My Car</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Clear Form</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 Premium Motors. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/car.js"></script>
+    <script src="js/search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!MainModule.requireAuth()) {
+                return;
+            }
+
+            populateYearSelect();
+            setupImageUpload();
+        });
+
+        function populateYearSelect() {
+            const yearSelect = document.getElementById('year');
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear; year >= 2000; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            }
+        }
+
+        function setupImageUpload() {
+            const uploadArea = document.getElementById('imageUpload');
+            const fileInput = document.getElementById('carImage');
+            const preview = document.getElementById('imagePreview');
+            const placeholder = document.getElementById('uploadPlaceholder');
+
+            uploadArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--primary-color)';
+            });
+
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.style.borderColor = 'var(--border-color)';
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border-color)';
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFile(files[0]);
+                }
+            });
+
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    handleFile(this.files[0]);
+                }
+            });
+        }
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showAlert('error', 'Please select an image file');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showAlert('error', 'Image size must be less than 5MB');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('imagePreview');
+                const placeholder = document.getElementById('uploadPlaceholder');
+                const imageData = document.getElementById('imageData');
+
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                imageData.value = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showAlert(type, message) {
+            const alertDiv = document.getElementById(type === 'success' ? 'alertSuccess' : 'alertError');
+            alertDiv.textContent = message;
+            alertDiv.classList.add('show');
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        function showError(fieldId, show) {
+            const field = document.getElementById(fieldId);
+            const errorField = document.getElementById(fieldId + 'Error');
+            if (show) {
+                field.parentElement.classList.add('error');
+            } else {
+                field.parentElement.classList.remove('error');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('addCarForm').reset();
+            document.getElementById('imagePreview').classList.add('hidden');
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('imageData').value = '';
+
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach(group => {
+                group.classList.remove('error');
+            });
+        }
+
+        const addCarForm = document.getElementById('addCarForm');
+        const name = document.getElementById('name');
+        const brand = document.getElementById('brand');
+        const year = document.getElementById('year');
+        const mileage = document.getElementById('mileage');
+        const price = document.getElementById('price');
+        const condition = document.getElementById('condition');
+        const description = document.getElementById('description');
+
+        name.addEventListener('blur', function() {
+            if (this.value.length < 3) {
+                showError('name', true);
+            } else {
+                showError('name', false);
+            }
+        });
+
+        mileage.addEventListener('blur', function() {
+            const mileageVal = parseInt(this.value);
+            if (isNaN(mileageVal) || mileageVal <= 0 || mileageVal > 500000) {
+                showError('mileage', true);
+            } else {
+                showError('mileage', false);
+            }
+        });
+
+        price.addEventListener('blur', function() {
+            const priceVal = parseFloat(this.value);
+            if (isNaN(priceVal) || priceVal <= 0 || priceVal > 10000) {
+                showError('price', true);
+            } else {
+                showError('price', false);
+            }
+        });
+
+        description.addEventListener('blur', function() {
+            if (this.value.length < 20) {
+                showError('description', true);
+            } else {
+                showError('description', false);
+            }
+        });
+
+        addCarForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            let isValid = true;
+
+            if (name.value.length < 3) {
+                showError('name', true);
+                isValid = false;
+            }
+
+            if (!brand.value) {
+                showError('brand', true);
+                isValid = false;
+            }
+
+            const yearVal = parseInt(year.value);
+            const currentYear = new Date().getFullYear();
+            if (isNaN(yearVal) || yearVal < 2000 || yearVal > currentYear) {
+                showError('year', true);
+                isValid = false;
+            }
+
+            const mileageVal = parseInt(mileage.value);
+            if (isNaN(mileageVal) || mileageVal <= 0 || mileageVal > 500000) {
+                showError('mileage', true);
+                isValid = false;
+            }
+
+            const priceVal = parseFloat(price.value);
+            if (isNaN(priceVal) || priceVal <= 0 || priceVal > 10000) {
+                showError('price', true);
+                isValid = false;
+            }
+
+            if (!condition.value) {
+                showError('condition', true);
+                isValid = false;
+            }
+
+            if (description.value.length < 20) {
+                showError('description', true);
+                isValid = false;
+            }
+
+            if (isValid) {
+                const currentUser = MainModule.getCurrentUser();
+                const imageData = document.getElementById('imageData').value;
+
+                const defaultImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2RlZmF1bHQiLz48dGV4dCB4PSI1MCIgeT0iNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PUFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOTRhM2I4Ij5JbWFnZTwvdGV4dD48L3N2Zz4=';
+
+                const carData = {
+                    name: name.value,
+                    brand: brand.value,
+                    year: yearVal,
+                    mileage: mileageVal,
+                    price: priceVal,
+                    condition: condition.value,
+                    description: description.value,
+                    image: imageData || defaultImage,
+                    sellerId: currentUser.id
+                };
+
+                const newCar = CarModule.addCar(carData);
+
+                if (newCar) {
+                    showAlert('success', 'Your car has been listed successfully!');
+                    setTimeout(() => {
+                        window.location.href = 'search.html';
+                    }, 2000);
+                } else {
+                    showAlert('error', 'Failed to list your car. Please try again.');
+                }
+            }
+        });
+
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.navbar-menu');
+            menu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
