@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Premium Motors</title>
+    <link rel="stylesheet" href="css/styles-main.css">
+    <link rel="stylesheet" href="css/styles-auth.css">
+    <link rel="stylesheet" href="css/styles-car.css">
+    <link rel="stylesheet" href="css/styles-search.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="8" fill="#2563eb"/>
+                    <path d="M10 25L20 12L30 25H10Z" fill="white"/>
+                    <circle cx="20" cy="25" r="3" fill="#2563eb"/>
+                </svg>
+                <span>Premium Motors</span>
+            </a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span>&#9776;</span>
+            </button>
+            <ul class="navbar-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="search.html">Search Cars</a></li>
+                <li><a href="add-car.html">Sell Your Car</a></li>
+                <li><a href="search.html#featured">Featured</a></li>
+            </ul>
+            <div class="navbar-auth">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="auth-container">
+            <div class="auth-card fade-in">
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Sign in to your Premium Motors account</p>
+
+                <div id="alertSuccess" class="alert alert-success"></div>
+                <div id="alertError" class="alert alert-error"></div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="emailOrUsername">Email or Username</label>
+                        <input type="text" id="emailOrUsername" name="emailOrUsername" placeholder="Enter your email or username" required>
+                        <span class="error-message" id="emailOrUsernameError">Please enter a valid email or username</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        <span class="error-message" id="passwordError">Password is required</span>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <label for="rememberMe" style="margin-bottom: 0;">Remember my login</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">Sign In</button>
+                </form>
+
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <a href="#" onclick="showForgotPassword(event)" style="color: var(--primary-color); text-decoration: none;">Forgot your password?</a>
+                </div>
+
+                <div class="auth-footer">
+                    <p>Don't have an account? <a href="register.html">Create one here</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 Premium Motors. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/car.js"></script>
+    <script src="js/search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            MainModule.checkAuthStatus();
+            checkRememberedUser();
+        });
+
+        function checkRememberedUser() {
+            const remembered = localStorage.getItem('remembered_user');
+            if (remembered) {
+                document.getElementById('emailOrUsername').value = remembered;
+                document.getElementById('rememberMe').checked = true;
+            }
+        }
+
+        function showForgotPassword(event) {
+            event.preventDefault();
+            const email = prompt('Please enter your email address to reset your password:');
+            if (email) {
+                if (AuthModule.validateEmail(email)) {
+                    alert('Password reset link has been sent to ' + email);
+                } else {
+                    alert('Please enter a valid email address');
+                }
+            }
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.navbar-menu');
+            menu.classList.toggle('active');
+        }
+
+        function hideAlerts() {
+            document.getElementById('alertSuccess').classList.remove('show');
+            document.getElementById('alertError').classList.remove('show');
+        }
+
+        function showAlert(type, message) {
+            hideAlerts();
+            const alertDiv = document.getElementById(type === 'success' ? 'alertSuccess' : 'alertError');
+            alertDiv.textContent = message;
+            alertDiv.classList.add('show');
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        const loginForm = document.getElementById('loginForm');
+        const emailOrUsername = document.getElementById('emailOrUsername');
+        const password = document.getElementById('password');
+        const rememberMe = document.getElementById('rememberMe');
+
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            hideAlerts();
+
+            if (!emailOrUsername.value.trim()) {
+                showAlert('error', 'Please enter your email or username');
+                return;
+            }
+
+            if (!password.value) {
+                showAlert('error', 'Please enter your password');
+                return;
+            }
+
+            const result = AuthModule.loginUser(emailOrUsername.value.trim(), password.value);
+
+            if (result.success) {
+                if (rememberMe.checked) {
+                    localStorage.setItem('remembered_user', emailOrUsername.value.trim());
+                } else {
+                    localStorage.removeItem('remembered_user');
+                }
+
+                showAlert('success', 'Login successful! Redirecting...');
+
+                setTimeout(() => {
+                    const redirect = MainModule.getUrlParams().redirect || 'index.html';
+                    window.location.href = redirect;
+                }, 1000);
+            } else {
+                showAlert('error', result.message || 'Invalid credentials. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html>
