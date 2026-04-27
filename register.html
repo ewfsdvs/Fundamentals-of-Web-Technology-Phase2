@@ -4,299 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - Premium Motors</title>
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-dark: #1e40af;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --background: #f8fafc;
-            --card-background: #ffffff;
-            --border: #e2e8f0;
-            --success: #10b981;
-            --error: #ef4444;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--background);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        .navbar {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: var(--primary-color);
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-
-        .navbar-brand svg {
-            margin-right: 0.5rem;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .navbar-menu {
-            display: flex;
-            list-style: none;
-        }
-
-        .navbar-menu li {
-            margin-left: 1.5rem;
-        }
-
-        .navbar-menu a {
-            text-decoration: none;
-            color: var(--text-primary);
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .navbar-menu a:hover,
-        .navbar-menu a.active {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .navbar-auth {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .auth-container {
-            max-width: 500px;
-            margin: 3rem auto;
-            background-color: var(--card-background);
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            padding: 2rem;
-        }
-
-        .auth-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .auth-header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .auth-header p {
-            color: var(--text-secondary);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .form-group .error {
-            color: var(--error);
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-
-        .form-group .success {
-            color: var(--success);
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-
-        .form-actions {
-            margin-top: 2rem;
-        }
-
-        .form-actions .btn {
-            width: 100%;
-            padding: 0.75rem;
-            font-size: 1rem;
-        }
-
-        .auth-footer {
-            text-align: center;
-            margin-top: 1.5rem;
-        }
-
-        .auth-footer a {
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        .auth-footer a:hover {
-            text-decoration: underline;
-        }
-
-        .alert {
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .alert-success {
-            background-color: #dcfce7;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
-        }
-
-        .alert-error {
-            background-color: #fee2e2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
-        }
-
-        @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .navbar-container {
-                flex-direction: row;
-                align-items: center;
-            }
-
-            .navbar-menu {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background-color: white;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                flex-direction: column;
-                padding: 1rem;
-                display: none;
-            }
-
-            .navbar-menu.active {
-                display: flex;
-                animation: slideDown 0.3s ease;
-            }
-
-            @keyframes slideDown {
-                from {
-                    opacity: 0;
-                    transform: translateY(-10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            .navbar-menu li {
-                margin-left: 0;
-                margin-bottom: 1rem;
-            }
-
-            .navbar-auth {
-                margin-left: auto;
-            }
-
-            .auth-container {
-                margin: 2rem 1rem;
-                padding: 1.5rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/styles-main.css">
+    <link rel="stylesheet" href="css/styles-auth.css">
+    <link rel="stylesheet" href="css/styles-car.css">
+    <link rel="stylesheet" href="css/styles-search.css">
 </head>
 <body>
     <nav class="navbar">
@@ -316,8 +27,7 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="search.html">Search Cars</a></li>
                 <li><a href="add-car.html">Sell Your Car</a></li>
-                <li><a href="register.html" class="active">Register</a></li>
-                <li><a href="login.html">Login</a></li>
+                <li><a href="search.html#featured">Featured</a></li>
             </ul>
             <div class="navbar-auth">
                 <a href="login.html" class="btn btn-outline">Login</a>
@@ -326,197 +36,214 @@
         </div>
     </nav>
 
-    <div class="container">
+    <main class="main-content">
         <div class="auth-container">
-            <div class="auth-header">
-                <h1>Create an Account</h1>
-                <p>Join our community to buy and sell used cars</p>
-            </div>
+            <div class="auth-card fade-in">
+                <h1 class="auth-title">Create Account</h1>
+                <p class="auth-subtitle">Join Premium Motors to buy and sell vehicles</p>
 
-            <form id="registerForm">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
-                    <div class="error" id="usernameError"></div>
+                <div id="alertSuccess" class="alert alert-success"></div>
+                <div id="alertError" class="alert alert-error"></div>
+
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="Choose a username (4-20 characters)" required>
+                        <span class="error-message" id="usernameError">Username must be 4-20 characters and contain only letters, numbers, and underscores</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                        <span class="error-message" id="emailError">Please enter a valid email address</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Enter your phone number (11 digits)" required>
+                        <span class="error-message" id="phoneError">Please enter a valid Chinese mobile phone number (11 digits starting with 1)</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+                        <span class="error-message" id="passwordError">Password must be at least 8 characters and contain uppercase, lowercase, and numbers</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
+                        <span class="error-message" id="confirmPasswordError">Passwords do not match</span>
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <label for="terms" style="margin-bottom: 0;">I agree to the <a href="#" onclick="showTerms(event)">Terms of Service</a> and <a href="#" onclick="showPrivacy(event)">Privacy Policy</a></label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 1rem;">Create Account</button>
+                </form>
+
+                <div class="auth-footer">
+                    <p>Already have an account? <a href="login.html">Sign in here</a></p>
                 </div>
-
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
-                    <div class="error" id="emailError"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                    <div class="error" id="passwordError"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
-                    <div class="error" id="confirmPasswordError"></div>
-                </div>
-
-                <div class="form-group">
-                    <label for="phone">Phone</label>
-                    <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
-                    <div class="error" id="phoneError"></div>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Register</button>
-                </div>
-            </form>
-
-            <div class="auth-footer">
-                <p>Already have an account? <a href="login.html">Login here</a></p>
             </div>
         </div>
-    </div>
+    </main>
 
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 Premium Motors. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/car.js"></script>
+    <script src="js/search.js"></script>
     <script>
-        const App = {
-            STORAGE_KEYS: {
-                USERS: 'used_car_users'
-            },
+        document.addEventListener('DOMContentLoaded', function() {
+            MainModule.checkAuthStatus();
+        });
 
-            validateEmail: function(email) {
-                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                return re.test(email);
-            },
+        function showTerms(event) {
+            event.preventDefault();
+            alert('Terms of Service\n\nBy using Premium Motors, you agree to:\n1. Provide accurate information\n2. Not post fraudulent listings\n3. Respect other users\n4. Follow all applicable laws\n5. Accept our fee structure');
+        }
 
-            validatePhone: function(phone) {
-                const re = /^1[3-9]\d{9}$/;
-                return re.test(phone);
-            },
+        function showPrivacy(event) {
+            event.preventDefault();
+            alert('Privacy Policy\n\nWe collect:\n- Account information\n- Vehicle listings\n- Messages between users\n\nWe do not share your personal information without consent.');
+        }
 
-            validatePassword: function(password) {
-                return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password);
-            },
+        const registerForm = document.getElementById('registerForm');
+        const username = document.getElementById('username');
+        const email = document.getElementById('email');
+        const phone = document.getElementById('phone');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
 
-            validateUsername: function(username) {
-                return /^[a-zA-Z0-9_]{4,20}$/.test(username);
-            },
-
-            generateId: function(prefix = 'id') {
-                return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-            },
-
-            getStorageItem: function(key, defaultValue = null) {
-                try {
-                    const item = localStorage.getItem(key);
-                    return item ? JSON.parse(item) : defaultValue;
-                } catch (e) {
-                    console.error('Storage error:', e);
-                    return defaultValue;
-                }
-            },
-
-            setStorageItem: function(key, value) {
-                try {
-                    localStorage.setItem(key, JSON.stringify(value));
-                    return true;
-                } catch (e) {
-                    console.error('Storage error:', e);
-                    return false;
-                }
-            },
-
-            registerUser: function(userData) {
-                const users = this.getStorageItem(this.STORAGE_KEYS.USERS, []);
-                const existingUser = users.find(user =>
-                    user.email === userData.email || user.username === userData.username
-                );
-                if (existingUser) {
-                    return { success: false, message: 'User already exists' };
-                }
-                const newUser = {
-                    ...userData,
-                    id: this.generateId('user'),
-                    createdAt: new Date().toISOString()
-                };
-                users.push(newUser);
-                this.setStorageItem(this.STORAGE_KEYS.USERS, users);
-                return { success: true, user: newUser };
-            },
-
-            showAlert: function(message, type = 'success') {
-                const alertDiv = document.createElement('div');
-                alertDiv.className = `alert alert-${type}`;
-                alertDiv.textContent = message;
-                const form = document.getElementById('registerForm');
-                form.parentNode.insertBefore(alertDiv, form);
-                setTimeout(() => {
-                    alertDiv.remove();
-                }, 3000);
+        function showError(fieldId, show) {
+            const field = document.getElementById(fieldId);
+            const errorField = document.getElementById(fieldId + 'Error');
+            if (show) {
+                field.parentElement.classList.add('error');
+                field.parentElement.classList.remove('success');
+            } else {
+                field.parentElement.classList.remove('error');
+                field.parentElement.classList.add('success');
             }
-        };
+        }
 
-        document.getElementById('registerForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (validateForm()) {
-                const userData = {
-                    username: document.getElementById('username').value,
-                    email: document.getElementById('email').value,
-                    password: document.getElementById('password').value,
-                    phone: document.getElementById('phone').value
-                };
-                const result = App.registerUser(userData);
-                if (result.success) {
-                    App.showAlert('Registration successful! Please login.');
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1500);
-                } else {
-                    App.showAlert(result.message, 'error');
-                }
+        function hideAlerts() {
+            document.getElementById('alertSuccess').classList.remove('show');
+            document.getElementById('alertError').classList.remove('show');
+        }
+
+        function showAlert(type, message) {
+            hideAlerts();
+            const alertDiv = document.getElementById(type === 'success' ? 'alertSuccess' : 'alertError');
+            alertDiv.textContent = message;
+            alertDiv.classList.add('show');
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        username.addEventListener('blur', function() {
+            if (this.value && !AuthModule.validateUsername(this.value)) {
+                showError('username', true);
+            } else if (this.value) {
+                showError('username', false);
             }
         });
 
-        function validateForm() {
+        email.addEventListener('blur', function() {
+            if (this.value && !AuthModule.validateEmail(this.value)) {
+                showError('email', true);
+            } else if (this.value) {
+                showError('email', false);
+            }
+        });
+
+        phone.addEventListener('blur', function() {
+            if (this.value && !AuthModule.validatePhone(this.value)) {
+                showError('phone', true);
+            } else if (this.value) {
+                showError('phone', false);
+            }
+        });
+
+        password.addEventListener('blur', function() {
+            if (this.value && !AuthModule.validatePassword(this.value)) {
+                showError('password', true);
+            } else if (this.value) {
+                showError('password', false);
+            }
+        });
+
+        confirmPassword.addEventListener('blur', function() {
+            if (this.value && this.value !== password.value) {
+                showError('confirmPassword', true);
+            } else if (this.value) {
+                showError('confirmPassword', false);
+            }
+        });
+
+        registerForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            hideAlerts();
+
             let isValid = true;
 
-            // Clear previous errors
-            document.querySelectorAll('.error').forEach(el => el.textContent = '');
-
-            // Validate username
-            const username = document.getElementById('username').value;
-            if (!App.validateUsername(username)) {
-                document.getElementById('usernameError').textContent = 'Username must be 4-20 characters and only contain letters, numbers, and underscores';
+            if (!AuthModule.validateUsername(username.value)) {
+                showError('username', true);
                 isValid = false;
             }
 
-            // Validate email
-            const email = document.getElementById('email').value;
-            if (!App.validateEmail(email)) {
-                document.getElementById('emailError').textContent = 'Please enter a valid email address';
+            if (!AuthModule.validateEmail(email.value)) {
+                showError('email', true);
                 isValid = false;
             }
 
-            // Validate password
-            const password = document.getElementById('password').value;
-            if (!App.validatePassword(password)) {
-                document.getElementById('passwordError').textContent = 'Password must be at least 8 characters and contain uppercase, lowercase, and number';
+            if (!AuthModule.validatePhone(phone.value)) {
+                showError('phone', true);
                 isValid = false;
             }
 
-            // Validate confirm password
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            if (confirmPassword !== password) {
-                document.getElementById('confirmPasswordError').textContent = 'Passwords do not match';
+            if (!AuthModule.validatePassword(password.value)) {
+                showError('password', true);
                 isValid = false;
             }
 
-            // Validate phone
-            const phone = document.getElementById('phone').value;
-            if (!App.validatePhone(phone)) {
-                document.getElementById('phoneError').textContent = 'Please enter a valid Chinese phone number';
+            if (confirmPassword.value !== password.value) {
+                showError('confirmPassword', true);
                 isValid = false;
             }
 
-            return isValid;
-        }
+            if (!document.getElementById('terms').checked) {
+                showAlert('error', 'Please agree to the Terms of Service and Privacy Policy');
+                isValid = false;
+            }
+
+            if (isValid) {
+                const result = AuthModule.registerUser({
+                    username: username.value,
+                    email: email.value,
+                    phone: phone.value,
+                    password: password.value
+                });
+
+                if (result.success) {
+                    showAlert('success', 'Registration successful! Redirecting to login page...');
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 2000);
+                } else {
+                    showAlert('error', result.message || 'Registration failed. Please try again.');
+                }
+            }
+        });
 
         function toggleMobileMenu() {
             const menu = document.querySelector('.navbar-menu');
