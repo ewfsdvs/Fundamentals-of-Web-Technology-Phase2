@@ -1,19 +1,63 @@
-// Phase 2 - Member 4 (陈明) - Search Functionality JS with LocalStorage
-
 const App = {
     STORAGE_KEYS: {
-        CARS: 'used_car_cars'
+        USERS: 'used_car_users',
+        CARS: 'used_car_cars',
+        CURRENT_USER: 'used_car_current_user'
     },
 
-    currentPage: 1,
-    itemsPerPage: 6,
-    sortedCars: [],
+    API_BASE_URL: '',
 
     init: function() {
+        this.checkAuthStatus();
+        this.initNavigation();
         this.initSampleData();
-        this.loadCars();
-        this.initEventListeners();
-        this.updateNavbar();
+    },
+
+    checkAuthStatus: function() {
+        const currentUser = localStorage.getItem(this.STORAGE_KEYS.CURRENT_USER);
+        this.updateAuthUI(currentUser);
+    },
+
+    updateAuthUI: function(user) {
+        const authButtons = document.querySelector('.navbar-auth');
+        if (!authButtons) return;
+
+        if (user) {
+            const userData = JSON.parse(user);
+            authButtons.innerHTML = `
+                <span style="color: var(--text-primary);">Welcome, ${userData.username}</span>
+                <button class="btn btn-outline" onclick="App.logout()">Logout</button>
+            `;
+        } else {
+            authButtons.innerHTML = `
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            `;
+        }
+    },
+
+    logout: function() {
+        localStorage.removeItem(this.STORAGE_KEYS.CURRENT_USER);
+        window.location.href = 'index.html';
+    },
+
+    initNavigation: function() {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const navLinks = document.querySelectorAll('.navbar-menu a');
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            }
+        });
+
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navbarMenu = document.querySelector('.navbar-menu');
+        if (mobileMenuBtn && navbarMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                navbarMenu.classList.toggle('active');
+            });
+        }
     },
 
     initSampleData: function() {
@@ -101,148 +145,54 @@ const App = {
             ];
             localStorage.setItem(this.STORAGE_KEYS.CARS, JSON.stringify(sampleCars));
         }
-    },
 
-    getStorageItem: function(key, defaultValue = null) {
-        try {
-            const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : defaultValue;
-        } catch (e) {
-            console.error('Storage error:', e);
-            return defaultValue;
+        const users = JSON.parse(localStorage.getItem(this.STORAGE_KEYS.USERS) || '[]');
+        if (users.length === 0) {
+            const sampleUsers = [
+                {
+                    id: 'user_001',
+                    username: 'john_seller',
+                    email: 'john@example.com',
+                    password: 'Test1234',
+                    phone: '13800138000',
+                    createdAt: new Date().toISOString()
+                }
+            ];
+            localStorage.setItem(this.STORAGE_KEYS.USERS, JSON.stringify(sampleUsers));
         }
     },
 
-    searchCars: function(criteria = {}) {
-        let cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
-
-        if (criteria.keyword) {
-            const keyword = criteria.keyword.toLowerCase();
-            cars = cars.filter(car =>
-                car.name.toLowerCase().includes(keyword) ||
-                car.brand.toLowerCase().includes(keyword) ||
-                car.description.toLowerCase().includes(keyword)
-            );
-        }
-
-        if (criteria.brand && criteria.brand !== '') {
-            cars = cars.filter(car => car.brand === criteria.brand);
-        }
-
-        if (criteria.minPrice) {
-            cars = cars.filter(car => car.price >= parseFloat(criteria.minPrice));
-        }
-
-        if (criteria.maxPrice) {
-            cars = cars.filter(car => car.price <= parseFloat(criteria.maxPrice));
-        }
-
-        if (criteria.year && criteria.year !== '') {
-            cars = cars.filter(car => car.year.toString() === criteria.year);
-        }
-
-        if (criteria.condition && criteria.condition !== '') {
-            cars = cars.filter(car => car.condition === criteria.condition);
-        }
-
-        return cars;
+    getCurrentUser: function() {
+        const userStr = localStorage.getItem(this.STORAGE_KEYS.CURRENT_USER);
+        return userStr ? JSON.parse(userStr) : null;
     },
 
-    sortCars: function(cars, sortBy) {
-        switch (sortBy) {
-            case 'price-asc':
-                return cars.sort((a, b) => a.price - b.price);
-            case 'price-desc':
-                return cars.sort((a, b) => b.price - a.price);
-            case 'year-desc':
-                return cars.sort((a, b) => b.year - a.year);
-            case 'mileage-asc':
-                return cars.sort((a, b) => a.mileage - b.mileage);
-            default:
-                return cars;
+    isLoggedIn: function() {
+        return !!localStorage.getItem(this.STORAGE_KEYS.CURRENT_USER);
+    },
+
+    requireAuth: function() {
+        if (!this.isLoggedIn()) {
+            alert('Please login first!');
+            window.location.href = 'login.html';
+            return false;
         }
+        return true;
     },
 
-    paginateCars: function(cars, page, itemsPerPage) {
-        const startIndex = (page - 1) * itemsPerPage;
-        return cars.slice(startIndex, startIndex + itemsPerPage);
+    showAlert: function(message, type = 'success') {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} show`;
+        alertDiv.textContent = message;
+        return alertDiv;
     },
 
-    loadCars: function() {
-        const criteria = this.getSearchCriteria();
-        let cars = this.searchCars(criteria);
-        cars = this.sortCars(cars, document.getElementById('sortSelect').value);
-        this.sortedCars = cars;
-        this.renderCars(cars);
-        this.renderPagination(cars.length);
-        document.getElementById('resultsCount').textContent = `Showing ${cars.length} results`;
+    formatPrice: function(price) {
+        return '¥' + price.toLocaleString('zh-CN', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
     },
 
-    renderCars: function(cars) {
-        const container = document.getElementById('carGrid');
-        const paginatedCars = this.paginateCars(cars, this.currentPage, this.itemsPerPage);
-
-        if (paginatedCars.length > 0) {
-            container.innerHTML = paginatedCars.map(car => this.renderCarCard(car)).join('');
-        } else {
-            container.innerHTML = '<div class="no-results">No cars found matching your criteria</div>';
-        }
-    },
-
-    renderCarCard: function(car) {
-        return `
-            <div class="car-card fade-in" onclick="window.location.href='car-detail.html?id=${car.id}'">
-                <img src="${car.image}" alt="${car.name}" class="car-card-image">
-                <div class="car-card-content">
-                    <h3 class="car-card-title">${car.name}</h3>
-                    <div class="car-card-info">
-                        <span>${car.brand}</span>
-                        <span>${car.year}</span>
-                        <span>${car.mileage.toLocaleString()} km</span>
-                        <span class="status-badge ${this.getConditionClass(car.condition)}">${this.getConditionLabel(car.condition)}</span>
-                    </div>
-                    <div class="car-card-price">
-                        ¥${car.price.toLocaleString('zh-CN', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} <small>万</small>
-                    </div>
-                </div>
-            </div>
-        `;
-    },
-
-    renderPagination: function(totalItems) {
-        const container = document.getElementById('pagination');
-        const totalPages = Math.ceil(totalItems / this.itemsPerPage);
-
-        if (totalPages <= 1) {
-            container.innerHTML = '';
-            return;
-        }
-
-        let paginationHTML = '';
-        for (let i = 1; i <= totalPages; i++) {
-            paginationHTML += `
-                <button class="page-btn ${i === this.currentPage ? 'active' : ''}" onclick="App.goToPage(${i})">
-                    ${i}
-                </button>
-            `;
-        }
-        container.innerHTML = paginationHTML;
-    },
-
-    goToPage: function(page) {
-        this.currentPage = page;
-        this.loadCars();
-    },
-
-    getSearchCriteria: function() {
-        return {
-            keyword: document.getElementById('keyword').value.trim(),
-            brand: document.getElementById('brand').value,
-            minPrice: document.getElementById('minPrice').value,
-            maxPrice: document.getElementById('maxPrice').value,
-            year: document.getElementById('year').value,
-            condition: document.getElementById('condition').value
-        };
+    formatMileage: function(mileage) {
+        return mileage.toLocaleString() + ' km';
     },
 
     getConditionLabel: function(condition) {
@@ -263,34 +213,48 @@ const App = {
         return classes[condition] || '';
     },
 
-    showSearchSuggestions: function(keyword) {
-        const suggestionsContainer = document.getElementById('searchSuggestions');
-        if (!keyword) {
-            suggestionsContainer.style.display = 'none';
-            return;
-        }
-
-        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
-        const suggestions = cars
-            .filter(car => car.name.toLowerCase().includes(keyword.toLowerCase()) || car.brand.toLowerCase().includes(keyword.toLowerCase()))
-            .slice(0, 5);
-
-        if (suggestions.length > 0) {
-            suggestionsContainer.innerHTML = suggestions.map(car => `
-                <div class="search-suggestion" onclick="App.selectSuggestion('${car.name}')">
-                    <div class="suggestion-brand">${car.brand}</div>
-                    <div class="suggestion-model">${car.name}</div>
-                </div>
-            `).join('');
-            suggestionsContainer.style.display = 'block';
-        } else {
-            suggestionsContainer.style.display = 'none';
-        }
+    generateId: function(prefix = 'id') {
+        return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     },
 
-    selectSuggestion: function(name) {
-        document.getElementById('keyword').value = name;
-        document.getElementById('searchSuggestions').style.display = 'none';
+    validateEmail: function(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    },
+
+    validatePhone: function(phone) {
+        const re = /^1[3-9]\d{9}$/;
+        return re.test(phone);
+    },
+
+    validatePassword: function(password) {
+        return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password);
+    },
+
+    validateUsername: function(username) {
+        return /^[a-zA-Z0-9_]{4,20}$/.test(username);
+    },
+
+    validateYear: function(year) {
+        const currentYear = new Date().getFullYear();
+        return year >= 2000 && year <= currentYear;
+    },
+
+    validateMileage: function(mileage) {
+        return mileage > 0 && mileage < 500000;
+    },
+
+    validatePrice: function(price) {
+        return price > 0 && price < 10000;
+    },
+
+    getUrlParams: function() {
+        const params = {};
+        const searchParams = new URLSearchParams(window.location.search);
+        for (const [key, value] of searchParams.entries()) {
+            params[key] = value;
+        }
+        return params;
     },
 
     debounce: function(func, wait) {
@@ -305,65 +269,187 @@ const App = {
         };
     },
 
-    updateNavbar: function() {
-        const currentUser = this.getStorageItem('used_car_current_user', null);
-        const authButtons = document.querySelector('.navbar-auth');
-        
-        if (authButtons) {
-            if (currentUser) {
-                authButtons.innerHTML = `
-                    <span class="user-greeting">Welcome, ${currentUser.username}</span>
-                    <button class="btn btn-outline" onclick="App.logoutUser()">Logout</button>
-                `;
-            } else {
-                authButtons.innerHTML = `
-                    <a href="login.html" class="btn btn-outline">Login</a>
-                    <a href="register.html" class="btn btn-primary">Register</a>
-                `;
-            }
+    setStorageItem: function(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+            return true;
+        } catch (e) {
+            console.error('Storage error:', e);
+            return false;
         }
     },
 
-    logoutUser: function() {
-        localStorage.removeItem('used_car_current_user');
-        this.updateNavbar();
-        window.location.href = 'index.html';
+    getStorageItem: function(key, defaultValue = null) {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : defaultValue;
+        } catch (e) {
+            console.error('Storage error:', e);
+            return defaultValue;
+        }
     },
 
-    initEventListeners: function() {
-        document.getElementById('searchForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.currentPage = 1;
-            this.loadCars();
-        });
-
-        document.getElementById('sortSelect').addEventListener('change', () => {
-            this.currentPage = 1;
-            this.loadCars();
-        });
-
-        document.getElementById('keyword').addEventListener('input', this.debounce((e) => {
-            this.showSearchSuggestions(e.target.value);
-        }, 300));
-
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.form-group')) {
-                document.getElementById('searchSuggestions').style.display = 'none';
-            }
-        });
-
-        // Mobile menu toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', () => {
-                const menu = document.querySelector('.navbar-menu');
-                menu.classList.toggle('active');
-            });
+    removeStorageItem: function(key) {
+        try {
+            localStorage.removeItem(key);
+            return true;
+        } catch (e) {
+            console.error('Storage error:', e);
+            return false;
         }
+    },
+
+    renderCarCard: function(car) {
+        return `
+            <div class="car-card fade-in" onclick="window.location.href='car-detail.html?id=${car.id}'">
+                <img src="${car.image}" alt="${car.name}" class="car-card-image">
+                <div class="car-card-content">
+                    <h3 class="car-card-title">${car.name}</h3>
+                    <div class="car-card-info">
+                        <span>${car.brand}</span>
+                        <span>${car.year}</span>
+                        <span>${this.formatMileage(car.mileage)}</span>
+                        <span class="status-badge ${this.getConditionClass(car.condition)}">${this.getConditionLabel(car.condition)}</span>
+                    </div>
+                    <div class="car-card-price">
+                        ${this.formatPrice(car.price)} <small>万</small>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    searchCars: function(criteria = {}) {
+        let cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+
+        if (criteria.keyword) {
+            const keyword = criteria.keyword.toLowerCase();
+            cars = cars.filter(car =>
+                car.name.toLowerCase().includes(keyword) ||
+                car.brand.toLowerCase().includes(keyword) ||
+                car.description.toLowerCase().includes(keyword)
+            );
+        }
+
+        if (criteria.brand && criteria.brand !== 'all') {
+            cars = cars.filter(car => car.brand === criteria.brand);
+        }
+
+        if (criteria.minPrice) {
+            cars = cars.filter(car => car.price >= parseFloat(criteria.minPrice));
+        }
+
+        if (criteria.maxPrice) {
+            cars = cars.filter(car => car.price <= parseFloat(criteria.maxPrice));
+        }
+
+        if (criteria.year && criteria.year !== 'all') {
+            cars = cars.filter(car => car.year.toString() === criteria.year);
+        }
+
+        if (criteria.condition && criteria.condition !== 'all') {
+            cars = cars.filter(car => car.condition === criteria.condition);
+        }
+
+        return cars;
+    },
+
+    getCarById: function(carId) {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        return cars.find(car => car.id === carId);
+    },
+
+    getCarsBySeller: function(sellerId) {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        return cars.filter(car => car.sellerId === sellerId);
+    },
+
+    addCar: function(carData) {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        const newCar = {
+            ...carData,
+            id: this.generateId('car'),
+            createdAt: new Date().toISOString()
+        };
+        cars.unshift(newCar);
+        this.setStorageItem(this.STORAGE_KEYS.CARS, cars);
+        return newCar;
+    },
+
+    updateCar: function(carId, carData) {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        const index = cars.findIndex(car => car.id === carId);
+        if (index !== -1) {
+            cars[index] = { ...cars[index], ...carData };
+            this.setStorageItem(this.STORAGE_KEYS.CARS, cars);
+            return cars[index];
+        }
+        return null;
+    },
+
+    deleteCar: function(carId) {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        const filteredCars = cars.filter(car => car.id !== carId);
+        this.setStorageItem(this.STORAGE_KEYS.CARS, filteredCars);
+        return true;
+    },
+
+    registerUser: function(userData) {
+        const users = this.getStorageItem(this.STORAGE_KEYS.USERS, []);
+        const existingUser = users.find(user =>
+            user.email === userData.email || user.username === userData.username
+        );
+        if (existingUser) {
+            return { success: false, message: 'User already exists' };
+        }
+        const newUser = {
+            ...userData,
+            id: this.generateId('user'),
+            createdAt: new Date().toISOString()
+        };
+        users.push(newUser);
+        this.setStorageItem(this.STORAGE_KEYS.USERS, users);
+        return { success: true, user: newUser };
+    },
+
+    loginUser: function(emailOrUsername, password) {
+        const users = this.getStorageItem(this.STORAGE_KEYS.USERS, []);
+        const user = users.find(u =>
+            (u.email === emailOrUsername || u.username === emailOrUsername) &&
+            u.password === password
+        );
+        if (user) {
+            const userWithoutPassword = { ...user };
+            delete userWithoutPassword.password;
+            this.setStorageItem(this.STORAGE_KEYS.CURRENT_USER, userWithoutPassword);
+            return { success: true, user: userWithoutPassword };
+        }
+        return { success: false, message: 'Invalid credentials' };
+    },
+
+    getAllBrands: function() {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        const brands = [...new Set(cars.map(car => car.brand))];
+        return brands.sort();
+    },
+
+    getAllYears: function() {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        const years = [...new Set(cars.map(car => car.year))];
+        return years.sort((a, b) => b - a);
+    },
+
+    getRelatedCars: function(carId, limit = 4) {
+        const currentCar = this.getCarById(carId);
+        if (!currentCar) return [];
+
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        return cars
+            .filter(car => car.id !== carId && car.brand === currentCar.brand)
+            .slice(0, limit);
     }
 };
 
-// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     App.init();
 });
