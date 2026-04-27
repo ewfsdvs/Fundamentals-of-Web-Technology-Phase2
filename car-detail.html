@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Details - Premium Motors</title>
+    <link rel="stylesheet" href="css/styles-main.css">
+    <link rel="stylesheet" href="css/styles-auth.css">
+    <link rel="stylesheet" href="css/styles-car.css">
+    <link rel="stylesheet" href="css/styles-search.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="8" fill="#2563eb"/>
+                    <path d="M10 25L20 12L30 25H10Z" fill="white"/>
+                    <circle cx="20" cy="25" r="3" fill="#2563eb"/>
+                </svg>
+                <span>Premium Motors</span>
+            </a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span>&#9776;</span>
+            </button>
+            <ul class="navbar-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="search.html">Search Cars</a></li>
+                <li><a href="add-car.html">Sell Your Car</a></li>
+                <li><a href="search.html#featured">Featured</a></li>
+            </ul>
+            <div class="navbar-auth">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <a href="search.html">Search Cars</a>
+                <span>/</span>
+                <span id="breadcrumbCarName">Loading...</span>
+            </div>
+
+            <div id="loadingState" class="loading">
+                <div class="spinner"></div>
+            </div>
+
+            <div id="carDetailContent" class="hidden">
+                <div class="detail-header">
+                    <div>
+                        <img id="carImage" class="detail-image" src="" alt="Car Image">
+                    </div>
+                    <div class="detail-info">
+                        <h1 id="carName" class="detail-title"></h1>
+                        <div id="carPrice" class="detail-price"></div>
+
+                        <div class="detail-meta">
+                            <div class="detail-meta-item">
+                                <span>📅</span>
+                                <span id="carYear"></span>
+                            </div>
+                            <div class="detail-meta-item">
+                                <span>🚗</span>
+                                <span id="carMileage"></span>
+                            </div>
+                            <div class="detail-meta-item">
+                                <span>🏷️</span>
+                                <span id="carBrand"></span>
+                            </div>
+                            <div class="detail-meta-item">
+                                <span id="carCondition"></span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 2rem;">
+                            <button class="btn btn-primary" style="width: 100%; padding: 1rem;" onclick="contactSeller()">
+                                Contact Seller
+                            </button>
+                        </div>
+
+                        <div class="detail-actions">
+                            <button class="btn btn-success" onclick="saveToFavorites()">
+                                ♡ Save to Favorites
+                            </button>
+                            <button class="btn btn-outline" onclick="shareListing()">
+                                📤 Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-description">
+                    <h3>Vehicle Description</h3>
+                    <p id="carDescription" style="line-height: 1.8; color: var(--text-secondary);"></p>
+                </div>
+
+                <div class="detail-description">
+                    <h3>Vehicle Specifications</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem;">
+                        <div style="padding: 1rem; background-color: var(--background-color); border-radius: var(--border-radius);">
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Brand</div>
+                            <div id="specBrand" style="font-weight: 600; font-size: 1.1rem;"></div>
+                        </div>
+                        <div style="padding: 1rem; background-color: var(--background-color); border-radius: var(--border-radius);">
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Year</div>
+                            <div id="specYear" style="font-weight: 600; font-size: 1.1rem;"></div>
+                        </div>
+                        <div style="padding: 1rem; background-color: var(--background-color); border-radius: var(--border-radius);">
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Mileage</div>
+                            <div id="specMileage" style="font-weight: 600; font-size: 1.1rem;"></div>
+                        </div>
+                        <div style="padding: 1rem; background-color: var(--background-color); border-radius: var(--border-radius);">
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Condition</div>
+                            <div id="specCondition" style="font-weight: 600; font-size: 1.1rem;"></div>
+                        </div>
+                        <div style="padding: 1rem; background-color: var(--background-color); border-radius: var(--border-radius);">
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Price</div>
+                            <div id="specPrice" style="font-weight: 600; font-size: 1.1rem; color: var(--primary-color);"></div>
+                        </div>
+                        <div style="padding: 1rem; background-color: var(--background-color); border-radius: var(--border-radius);">
+                            <div style="color: var(--text-secondary); font-size: 0.9rem;">Listed Date</div>
+                            <div id="specDate" style="font-weight: 600; font-size: 1.1rem;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="relatedCarsSection" class="section">
+                    <h2 class="section-title" style="text-align: left;">Similar Vehicles</h2>
+                    <div class="car-grid" id="relatedCars"></div>
+                </div>
+            </div>
+
+            <div id="errorState" class="no-results hidden">
+                <h3>Vehicle Not Found</h3>
+                <p>The vehicle you're looking for doesn't exist or has been removed.</p>
+                <a href="search.html" class="btn btn-primary">Back to Search</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 Premium Motors. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/car.js"></script>
+    <script src="js/search.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCarDetails();
+        });
+
+        function loadCarDetails() {
+            const params = MainModule.getUrlParams();
+            const carId = params.id;
+
+            if (!carId) {
+                showError();
+                return;
+            }
+
+            const car = CarModule.getCarById(carId);
+
+            if (!car) {
+                showError();
+                return;
+            }
+
+            displayCarDetails(car);
+            loadRelatedCars(carId, car.brand);
+        }
+
+        function displayCarDetails(car) {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('carDetailContent').classList.remove('hidden');
+            document.getElementById('breadcrumbCarName').textContent = car.name;
+
+            document.getElementById('carImage').src = car.image;
+            document.getElementById('carImage').alt = car.name;
+            document.getElementById('carName').textContent = car.name;
+            document.getElementById('carPrice').textContent = MainModule.formatPrice(car.price) + ' 万';
+            document.getElementById('carYear').textContent = car.year + ' Year';
+            document.getElementById('carMileage').textContent = MainModule.formatMileage(car.mileage);
+            document.getElementById('carBrand').textContent = car.brand;
+
+            const conditionBadge = document.getElementById('carCondition');
+            conditionBadge.innerHTML = `<span class="status-badge ${MainModule.getConditionClass(car.condition)}">${MainModule.getConditionLabel(car.condition)}</span>`;
+
+            document.getElementById('carDescription').textContent = car.description;
+
+            document.getElementById('specBrand').textContent = car.brand;
+            document.getElementById('specYear').textContent = car.year;
+            document.getElementById('specMileage').textContent = MainModule.formatMileage(car.mileage);
+            document.getElementById('specCondition').textContent = MainModule.getConditionLabel(car.condition);
+            document.getElementById('specPrice').textContent = MainModule.formatPrice(car.price) + ' 万';
+            document.getElementById('specDate').textContent = formatDate(car.createdAt);
+
+            document.title = `${car.name} - Premium Motors`;
+        }
+
+        function loadRelatedCars(carId, brand) {
+            const relatedCars = CarModule.getRelatedCars(carId, 4);
+            const container = document.getElementById('relatedCars');
+
+            if (relatedCars.length === 0) {
+                document.getElementById('relatedCarsSection').classList.add('hidden');
+                return;
+            }
+
+            container.innerHTML = relatedCars.map(car => CarModule.renderCarCard(car)).join('');
+        }
+
+        function showError() {
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('errorState').classList.remove('hidden');
+        }
+
+        function contactSeller() {
+            const params = MainModule.getUrlParams();
+            const carId = params.id;
+            const car = CarModule.getCarById(carId);
+
+            if (!car) return;
+
+            const currentUser = MainModule.getCurrentUser();
+
+            if (!currentUser) {
+                if (confirm('You need to login to contact the seller. Would you like to login now?')) {
+                    window.location.href = `login.html?redirect=car-detail.html?id=${carId}`;
+                }
+                return;
+            }
+
+            const message = `Hello, I'm interested in your ${car.name} listed for ${MainModule.formatPrice(car.price)} 万. Is it still available?`;
+            alert(`Message to seller:\n\n${message}\n\nIn a real application, this would send a message through our messaging system.`);
+        }
+
+        function saveToFavorites() {
+            const params = MainModule.getUrlParams();
+            const carId = params.id;
+
+            if (!MainModule.isLoggedIn()) {
+                if (confirm('You need to login to save favorites. Would you like to login now?')) {
+                    window.location.href = `login.html?redirect=car-detail.html?id=${carId}`;
+                }
+                return;
+            }
+
+            let favorites = MainModule.getStorageItem('favorites', []);
+            if (!favorites.includes(carId)) {
+                favorites.push(carId);
+                MainModule.setStorageItem('favorites', favorites);
+                alert('Car saved to your favorites!');
+            } else {
+                alert('This car is already in your favorites!');
+            }
+        }
+
+        function shareListing() {
+            const params = MainModule.getUrlParams();
+            const carId = params.id;
+            const shareUrl = window.location.origin + window.location.pathname + '?id=' + carId;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: document.getElementById('carName').textContent,
+                    text: 'Check out this ' + document.getElementById('carName').textContent + ' on Premium Motors!',
+                    url: shareUrl
+                }).catch(err => {
+                    copyToClipboard(shareUrl);
+                });
+            } else {
+                copyToClipboard(shareUrl);
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Link copied to clipboard!');
+            }).catch(() => {
+                prompt('Copy this link:', text);
+            });
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.navbar-menu');
+            menu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
