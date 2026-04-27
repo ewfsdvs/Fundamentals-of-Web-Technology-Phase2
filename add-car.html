@@ -3,340 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sell Your Car - Premium Motors</title>
-    <style>
-        :root {
-            --primary-color: #2563eb;
-            --primary-dark: #1e40af;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --background: #f8fafc;
-            --card-background: #ffffff;
-            --border: #e2e8f0;
-            --success: #10b981;
-            --error: #ef4444;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background-color: var(--background);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-
-        .navbar {
-            background-color: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-        }
-
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: var(--primary-color);
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-
-        .navbar-brand svg {
-            margin-right: 0.5rem;
-        }
-
-        .mobile-menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .navbar-menu {
-            display: flex;
-            list-style: none;
-        }
-
-        .navbar-menu li {
-            margin-left: 1.5rem;
-        }
-
-        .navbar-menu a {
-            text-decoration: none;
-            color: var(--text-primary);
-            font-weight: 500;
-            transition: color 0.3s ease;
-        }
-
-        .navbar-menu a:hover,
-        .navbar-menu a.active {
-            color: var(--primary-color);
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .navbar-auth {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .btn-outline {
-            background-color: transparent;
-            color: var(--primary-color);
-            border: 1px solid var(--primary-color);
-        }
-
-        .btn-outline:hover {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .form-container {
-            max-width: 800px;
-            margin: 3rem auto;
-            background-color: var(--card-background);
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            padding: 2rem;
-        }
-
-        .form-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .form-header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-header p {
-            color: var(--text-secondary);
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-group .error {
-            color: var(--error);
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-
-        .image-upload {
-            border: 2px dashed var(--border);
-            border-radius: 4px;
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .image-upload:hover {
-            border-color: var(--primary-color);
-            background-color: rgba(37, 99, 235, 0.05);
-        }
-
-        .image-upload input {
-            display: none;
-        }
-
-        .image-upload-label {
-            display: block;
-            cursor: pointer;
-        }
-
-        .image-upload-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .image-preview {
-            margin-top: 1rem;
-            max-width: 100%;
-            max-height: 200px;
-            object-fit: contain;
-            border-radius: 4px;
-            border: 1px solid var(--border);
-        }
-
-        .form-actions {
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        .form-actions .btn {
-            padding: 0.75rem 2rem;
-            font-size: 1rem;
-        }
-
-        .alert {
-            padding: 1rem;
-            border-radius: 4px;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .alert-success {
-            background-color: #dcfce7;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
-        }
-
-        .alert-error {
-            background-color: #fee2e2;
-            color: #dc2626;
-            border: 1px solid #fecaca;
-        }
-
-        @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .navbar-container {
-                flex-direction: row;
-                align-items: center;
-            }
-
-            .navbar-menu {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                width: 100%;
-                background-color: white;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                flex-direction: column;
-                padding: 1rem;
-                display: none;
-            }
-
-            .navbar-menu.active {
-                display: flex;
-                animation: slideDown 0.3s ease;
-            }
-
-            @keyframes slideDown {
-                from {
-                    opacity: 0;
-                    transform: translateY(-10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-
-            .navbar-menu li {
-                margin-left: 0;
-                margin-bottom: 1rem;
-            }
-
-            .navbar-auth {
-                margin-left: auto;
-            }
-
-            .form-container {
-                margin: 2rem 1rem;
-                padding: 1.5rem;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <title>Add Car - Premium Motors</title>
+    <link rel="stylesheet" href="css/styles-main.css">
+    <link rel="stylesheet" href="css/styles-auth.css">
+    <link rel="stylesheet" href="css/styles-car.css">
+    <link rel="stylesheet" href="css/styles-search.css">
 </head>
 <body>
     <nav class="navbar">
@@ -355,9 +26,8 @@
             <ul class="navbar-menu">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="search.html">Search Cars</a></li>
-                <li><a href="add-car.html" class="active">Sell Your Car</a></li>
-                <li><a href="register.html">Register</a></li>
-                <li><a href="login.html">Login</a></li>
+                <li><a href="add-car.html">Sell Your Car</a></li>
+                <li><a href="search.html#featured">Featured</a></li>
             </ul>
             <div class="navbar-auth">
                 <a href="login.html" class="btn btn-outline">Login</a>
@@ -366,23 +36,28 @@
         </div>
     </nav>
 
-    <div class="container">
-        <div class="form-container">
-            <div class="form-header">
-                <h1>Sell Your Car</h1>
-                <p>List your vehicle in minutes and reach thousands of potential buyers</p>
+    <main class="main-content">
+        <div class="container" style="max-width: 800px;">
+            <div class="page-header">
+                <h1>List Your Car for Sale</h1>
+                <p>Fill in the details below to create your vehicle listing</p>
             </div>
 
-            <form id="addCarForm">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label for="name">Car Name</label>
-                        <input type="text" id="name" name="name" placeholder="e.g., BMW 3 Series 320i" required>
-                        <div class="error" id="nameError"></div>
-                    </div>
+            <div id="alertSuccess" class="alert alert-success"></div>
+            <div id="alertError" class="alert alert-error"></div>
 
+            <form id="addCarForm" class="card">
+                <h2 class="card-title">Vehicle Information</h2>
+
+                <div class="form-group">
+                    <label for="name">Vehicle Name / Model *</label>
+                    <input type="text" id="name" name="name" placeholder="e.g., BMW 3 Series 320i" required>
+                    <span class="error-message" id="nameError">Please enter a valid vehicle name (at least 3 characters)</span>
+                </div>
+
+                <div class="form-row">
                     <div class="form-group">
-                        <label for="brand">Brand</label>
+                        <label for="brand">Brand *</label>
                         <select id="brand" name="brand" required>
                             <option value="">Select Brand</option>
                             <option value="BMW">BMW</option>
@@ -391,250 +66,316 @@
                             <option value="Toyota">Toyota</option>
                             <option value="Honda">Honda</option>
                             <option value="Tesla">Tesla</option>
+                            <option value="Volkswagen">Volkswagen</option>
+                            <option value="Ford">Ford</option>
+                            <option value="Nissan">Nissan</option>
+                            <option value="Hyundai">Hyundai</option>
+                            <option value="Other">Other</option>
                         </select>
-                        <div class="error" id="brandError"></div>
+                        <span class="error-message" id="brandError">Please select a brand</span>
                     </div>
 
                     <div class="form-group">
-                        <label for="year">Year</label>
-                        <input type="number" id="year" name="year" placeholder="2020" required>
-                        <div class="error" id="yearError"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="mileage">Mileage (km)</label>
-                        <input type="number" id="mileage" name="mileage" placeholder="15000" required>
-                        <div class="error" id="mileageError"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="price">Price (万)</label>
-                        <input type="number" id="price" name="price" step="0.1" placeholder="28.5" required>
-                        <div class="error" id="priceError"></div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="condition">Condition</label>
-                        <select id="condition" name="condition" required>
-                            <option value="">Select Condition</option>
-                            <option value="excellent">Excellent</option>
-                            <option value="good">Good</option>
-                            <option value="medium">Medium</option>
+                        <label for="year">Year *</label>
+                        <select id="year" name="year" required>
+                            <option value="">Select Year</option>
                         </select>
-                        <div class="error" id="conditionError"></div>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="description">Description</label>
-                        <textarea id="description" name="description" placeholder="Describe your car in detail..." required></textarea>
-                        <div class="error" id="descriptionError"></div>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label>Car Image</label>
-                        <div class="image-upload">
-                            <input type="file" id="image" name="image" accept="image/*" required>
-                            <label for="image" class="image-upload-label">
-                                <div class="image-upload-icon">📷</div>
-                                <p>Click to upload image</p>
-                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Supports JPG, PNG, GIF</p>
-                            </label>
-                            <img id="imagePreview" class="image-preview" style="display: none;" alt="Preview">
-                        </div>
-                        <div class="error" id="imageError"></div>
+                        <span class="error-message" id="yearError">Please select a valid year</span>
                     </div>
                 </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">List Car</button>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="mileage">Mileage (km) *</label>
+                        <input type="number" id="mileage" name="mileage" placeholder="e.g., 25000" min="0" max="500000" required>
+                        <span class="error-message" id="mileageError">Please enter a valid mileage (0-500,000 km)</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Price (万元) *</label>
+                        <input type="number" id="price" name="price" placeholder="e.g., 25.8" min="0" max="9999" step="0.1" required>
+                        <span class="error-message" id="priceError">Please enter a valid price (0.1-9999 万元)</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="condition">Condition Rating *</label>
+                    <select id="condition" name="condition" required>
+                        <option value="">Select Condition</option>
+                        <option value="excellent">Excellent - Like new condition</option>
+                        <option value="good">Good - Minor wear, fully functional</option>
+                        <option value="medium">Medium - Visible wear, functional</option>
+                    </select>
+                    <span class="error-message" id="conditionError">Please select a condition rating</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Vehicle Description *</label>
+                    <textarea id="description" name="description" placeholder="Provide detailed information about your vehicle including features, maintenance history, and any notable aspects..." required></textarea>
+                    <span class="error-message" id="descriptionError">Please enter a description (at least 20 characters)</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Vehicle Image</label>
+                    <div class="image-upload" id="imageUpload">
+                        <input type="file" id="carImage" name="carImage" accept="image/*">
+                        <div id="uploadPlaceholder">
+                            <p style="font-size: 2rem; margin-bottom: 0.5rem;">📷</p>
+                            <p>Click or drag to upload vehicle image</p>
+                            <p style="color: var(--text-light); font-size: 0.9rem;">Supports: JPG, PNG (Max 5MB)</p>
+                        </div>
+                        <img id="imagePreview" class="image-upload-preview hidden" alt="Vehicle Preview">
+                    </div>
+                    <input type="hidden" id="imageData" name="imageData">
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1; padding: 1rem;">List My Car</button>
+                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Clear Form</button>
                 </div>
             </form>
         </div>
-    </div>
+    </main>
 
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 Premium Motors. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/car.js"></script>
+    <script src="js/search.js"></script>
     <script>
-        const App = {
-            STORAGE_KEYS: {
-                CARS: 'used_car_cars',
-                CURRENT_USER: 'used_car_current_user'
-            },
-
-            validateYear: function(year) {
-                const currentYear = new Date().getFullYear();
-                return year >= 2000 && year <= currentYear;
-            },
-
-            validateMileage: function(mileage) {
-                return mileage > 0 && mileage < 500000;
-            },
-
-            validatePrice: function(price) {
-                return price > 0 && price < 10000;
-            },
-
-            generateId: function(prefix = 'id') {
-                return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-            },
-
-            getStorageItem: function(key, defaultValue = null) {
-                try {
-                    const item = localStorage.getItem(key);
-                    return item ? JSON.parse(item) : defaultValue;
-                } catch (e) {
-                    console.error('Storage error:', e);
-                    return defaultValue;
-                }
-            },
-
-            setStorageItem: function(key, value) {
-                try {
-                    localStorage.setItem(key, JSON.stringify(value));
-                    return true;
-                } catch (e) {
-                    console.error('Storage error:', e);
-                    return false;
-                }
-            },
-
-            addCar: function(carData) {
-                const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
-                const newCar = {
-                    ...carData,
-                    id: this.generateId('car'),
-                    sellerId: 'user_001', // Default seller ID for demo
-                    createdAt: new Date().toISOString()
-                };
-                cars.unshift(newCar);
-                this.setStorageItem(this.STORAGE_KEYS.CARS, cars);
-                return newCar;
-            },
-
-            showAlert: function(message, type = 'success') {
-                const alertDiv = document.createElement('div');
-                alertDiv.className = `alert alert-${type}`;
-                alertDiv.textContent = message;
-                const form = document.getElementById('addCarForm');
-                form.parentNode.insertBefore(alertDiv, form);
-                setTimeout(() => {
-                    alertDiv.remove();
-                }, 3000);
-            },
-
-            requireAuth: function() {
-                const currentUser = this.getStorageItem(this.STORAGE_KEYS.CURRENT_USER);
-                if (!currentUser) {
-                    this.showAlert('Please login first!', 'error');
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1500);
-                    return false;
-                }
-                return true;
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!MainModule.requireAuth()) {
+                return;
             }
-        };
 
-        document.getElementById('addCarForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (validateForm()) {
-                if (!App.requireAuth()) return;
-                
-                const carData = {
-                    name: document.getElementById('name').value,
-                    brand: document.getElementById('brand').value,
-                    year: parseInt(document.getElementById('year').value),
-                    mileage: parseInt(document.getElementById('mileage').value),
-                    price: parseFloat(document.getElementById('price').value),
-                    condition: document.getElementById('condition').value,
-                    description: document.getElementById('description').value,
-                    image: document.getElementById('imagePreview').src
-                };
-                
-                const newCar = App.addCar(carData);
-                App.showAlert('Car listed successfully!');
-                setTimeout(() => {
-                    window.location.href = `car-detail.html?id=${newCar.id}`;
-                }, 1500);
+            populateYearSelect();
+            setupImageUpload();
+        });
+
+        function populateYearSelect() {
+            const yearSelect = document.getElementById('year');
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear; year >= 2000; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            }
+        }
+
+        function setupImageUpload() {
+            const uploadArea = document.getElementById('imageUpload');
+            const fileInput = document.getElementById('carImage');
+            const preview = document.getElementById('imagePreview');
+            const placeholder = document.getElementById('uploadPlaceholder');
+
+            uploadArea.addEventListener('click', function() {
+                fileInput.click();
+            });
+
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--primary-color)';
+            });
+
+            uploadArea.addEventListener('dragleave', function() {
+                uploadArea.style.borderColor = 'var(--border-color)';
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--border-color)';
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFile(files[0]);
+                }
+            });
+
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    handleFile(this.files[0]);
+                }
+            });
+        }
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showAlert('error', 'Please select an image file');
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                showAlert('error', 'Image size must be less than 5MB');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('imagePreview');
+                const placeholder = document.getElementById('uploadPlaceholder');
+                const imageData = document.getElementById('imageData');
+
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+                imageData.value = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function showAlert(type, message) {
+            const alertDiv = document.getElementById(type === 'success' ? 'alertSuccess' : 'alertError');
+            alertDiv.textContent = message;
+            alertDiv.classList.add('show');
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+            }, 5000);
+        }
+
+        function showError(fieldId, show) {
+            const field = document.getElementById(fieldId);
+            const errorField = document.getElementById(fieldId + 'Error');
+            if (show) {
+                field.parentElement.classList.add('error');
+            } else {
+                field.parentElement.classList.remove('error');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('addCarForm').reset();
+            document.getElementById('imagePreview').classList.add('hidden');
+            document.getElementById('uploadPlaceholder').classList.remove('hidden');
+            document.getElementById('imageData').value = '';
+
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach(group => {
+                group.classList.remove('error');
+            });
+        }
+
+        const addCarForm = document.getElementById('addCarForm');
+        const name = document.getElementById('name');
+        const brand = document.getElementById('brand');
+        const year = document.getElementById('year');
+        const mileage = document.getElementById('mileage');
+        const price = document.getElementById('price');
+        const condition = document.getElementById('condition');
+        const description = document.getElementById('description');
+
+        name.addEventListener('blur', function() {
+            if (this.value.length < 3) {
+                showError('name', true);
+            } else {
+                showError('name', false);
             }
         });
 
-        document.getElementById('image').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
+        mileage.addEventListener('blur', function() {
+            const mileageVal = parseInt(this.value);
+            if (isNaN(mileageVal) || mileageVal <= 0 || mileageVal > 500000) {
+                showError('mileage', true);
+            } else {
+                showError('mileage', false);
             }
         });
 
-        function validateForm() {
+        price.addEventListener('blur', function() {
+            const priceVal = parseFloat(this.value);
+            if (isNaN(priceVal) || priceVal <= 0 || priceVal > 10000) {
+                showError('price', true);
+            } else {
+                showError('price', false);
+            }
+        });
+
+        description.addEventListener('blur', function() {
+            if (this.value.length < 20) {
+                showError('description', true);
+            } else {
+                showError('description', false);
+            }
+        });
+
+        addCarForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+
             let isValid = true;
 
-            // Clear previous errors
-            document.querySelectorAll('.error').forEach(el => el.textContent = '');
-
-            // Validate name
-            const name = document.getElementById('name').value;
-            if (!name) {
-                document.getElementById('nameError').textContent = 'Please enter car name';
+            if (name.value.length < 3) {
+                showError('name', true);
                 isValid = false;
             }
 
-            // Validate brand
-            const brand = document.getElementById('brand').value;
-            if (!brand) {
-                document.getElementById('brandError').textContent = 'Please select brand';
+            if (!brand.value) {
+                showError('brand', true);
                 isValid = false;
             }
 
-            // Validate year
-            const year = parseInt(document.getElementById('year').value);
-            if (!App.validateYear(year)) {
-                const currentYear = new Date().getFullYear();
-                document.getElementById('yearError').textContent = `Year must be between 2000 and ${currentYear}`;
+            const yearVal = parseInt(year.value);
+            const currentYear = new Date().getFullYear();
+            if (isNaN(yearVal) || yearVal < 2000 || yearVal > currentYear) {
+                showError('year', true);
                 isValid = false;
             }
 
-            // Validate mileage
-            const mileage = parseInt(document.getElementById('mileage').value);
-            if (!App.validateMileage(mileage)) {
-                document.getElementById('mileageError').textContent = 'Mileage must be between 1 and 500000 km';
+            const mileageVal = parseInt(mileage.value);
+            if (isNaN(mileageVal) || mileageVal <= 0 || mileageVal > 500000) {
+                showError('mileage', true);
                 isValid = false;
             }
 
-            // Validate price
-            const price = parseFloat(document.getElementById('price').value);
-            if (!App.validatePrice(price)) {
-                document.getElementById('priceError').textContent = 'Price must be between 0.1 and 10000万';
+            const priceVal = parseFloat(price.value);
+            if (isNaN(priceVal) || priceVal <= 0 || priceVal > 10000) {
+                showError('price', true);
                 isValid = false;
             }
 
-            // Validate condition
-            const condition = document.getElementById('condition').value;
-            if (!condition) {
-                document.getElementById('conditionError').textContent = 'Please select condition';
+            if (!condition.value) {
+                showError('condition', true);
                 isValid = false;
             }
 
-            // Validate description
-            const description = document.getElementById('description').value;
-            if (!description || description.length < 10) {
-                document.getElementById('descriptionError').textContent = 'Description must be at least 10 characters';
+            if (description.value.length < 20) {
+                showError('description', true);
                 isValid = false;
             }
 
-            // Validate image
-            const image = document.getElementById('image').files[0];
-            if (!image) {
-                document.getElementById('imageError').textContent = 'Please upload an image';
-                isValid = false;
-            }
+            if (isValid) {
+                const currentUser = MainModule.getCurrentUser();
+                const imageData = document.getElementById('imageData').value;
 
-            return isValid;
-        }
+                const defaultImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2RlZmF1bHQiLz48dGV4dCB4PSI1MCIgeT0iNTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PUFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjOTRhM2I4Ij5JbWFnZTwvdGV4dD48L3N2Zz4=';
+
+                const carData = {
+                    name: name.value,
+                    brand: brand.value,
+                    year: yearVal,
+                    mileage: mileageVal,
+                    price: priceVal,
+                    condition: condition.value,
+                    description: description.value,
+                    image: imageData || defaultImage,
+                    sellerId: currentUser.id
+                };
+
+                const newCar = CarModule.addCar(carData);
+
+                if (newCar) {
+                    showAlert('success', 'Your car has been listed successfully!');
+                    setTimeout(() => {
+                        window.location.href = 'search.html';
+                    }, 2000);
+                } else {
+                    showAlert('error', 'Failed to list your car. Please try again.');
+                }
+            }
+        });
 
         function toggleMobileMenu() {
             const menu = document.querySelector('.navbar-menu');
