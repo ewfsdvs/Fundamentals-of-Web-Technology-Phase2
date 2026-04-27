@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Cars - Premium Motors</title>
+    <link rel="stylesheet" href="css/styles-main.css">
+    <link rel="stylesheet" href="css/styles-auth.css">
+    <link rel="stylesheet" href="css/styles-car.css">
+    <link rel="stylesheet" href="css/styles-search.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="index.html" class="navbar-brand">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="8" fill="#2563eb"/>
+                    <path d="M10 25L20 12L30 25H10Z" fill="white"/>
+                    <circle cx="20" cy="25" r="3" fill="#2563eb"/>
+                </svg>
+                <span>Premium Motors</span>
+            </a>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <span>&#9776;</span>
+            </button>
+            <ul class="navbar-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="search.html" class="active">Search Cars</a></li>
+                <li><a href="add-car.html">Sell Your Car</a></li>
+                <li><a href="search.html#featured">Featured</a></li>
+            </ul>
+            <div class="navbar-auth">
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <div class="page-header">
+                <h1>Search Vehicles</h1>
+                <p>Find your perfect used car from our extensive inventory</p>
+            </div>
+
+            <div class="filter-section">
+                <h3>Filter Options</h3>
+                <div class="filter-grid">
+                    <div class="filter-item">
+                        <label for="searchKeyword">Keyword</label>
+                        <input type="text" id="searchKeyword" placeholder="Search by name, brand...">
+                    </div>
+                    <div class="filter-item">
+                        <label for="filterBrand">Brand</label>
+                        <select id="filterBrand">
+                            <option value="all">All Brands</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label for="filterMinPrice">Min Price (万元)</label>
+                        <input type="number" id="filterMinPrice" placeholder="0" min="0">
+                    </div>
+                    <div class="filter-item">
+                        <label for="filterMaxPrice">Max Price (万元)</label>
+                        <input type="number" id="filterMaxPrice" placeholder="9999" min="0">
+                    </div>
+                    <div class="filter-item">
+                        <label for="filterYear">Year</label>
+                        <select id="filterYear">
+                            <option value="all">All Years</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label for="filterCondition">Condition</label>
+                        <select id="filterCondition">
+                            <option value="all">All Conditions</option>
+                            <option value="excellent">Excellent</option>
+                            <option value="good">Good</option>
+                            <option value="medium">Medium</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                    <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                    <button class="btn btn-secondary" onclick="clearFilters()">Clear Filters</button>
+                </div>
+            </div>
+
+            <div id="searchResults">
+                <div class="section-title" style="text-align: left; margin-bottom: 1rem;">
+                    <h2>Search Results</h2>
+                    <p style="color: var(--text-secondary); font-size: 1rem;" id="resultsCount">Loading...</p>
+                </div>
+                <div class="car-grid" id="carsContainer">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2026 Premium Motors. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/car.js"></script>
+    <script src="js/search.js"></script>
+    <script>
+        const ITEMS_PER_PAGE = 12;
+        let currentPage = 1;
+        let allFilteredCars = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFilters();
+            loadUrlParams();
+            performSearch();
+        });
+
+        function initializeFilters() {
+            const brands = getAllBrands();
+            const brandSelect = document.getElementById('filterBrand');
+            brands.forEach(brand => {
+                const option = document.createElement('option');
+                option.value = brand;
+                option.textContent = brand;
+                brandSelect.appendChild(option);
+            });
+
+            const years = getAllYears();
+            const yearSelect = document.getElementById('filterYear');
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                yearSelect.appendChild(option);
+            });
+        }
+
+        function getAllBrands() {
+            const cars = MainModule.getStorageItem(MainModule.STORAGE_KEYS.CARS, []);
+            const brands = [...new Set(cars.map(car => car.brand))];
+            return brands.sort();
+        }
+
+        function getAllYears() {
+            const cars = MainModule.getStorageItem(MainModule.STORAGE_KEYS.CARS, []);
+            const years = [...new Set(cars.map(car => car.year))];
+            return years.sort((a, b) => b - a);
+        }
+
+        function loadUrlParams() {
+            const params = MainModule.getUrlParams();
+            if (params.keyword) {
+                document.getElementById('searchKeyword').value = params.keyword;
+            }
+            if (params.brand) {
+                document.getElementById('filterBrand').value = params.brand;
+            }
+            if (params.minPrice) {
+                document.getElementById('filterMinPrice').value = params.minPrice;
+            }
+            if (params.maxPrice) {
+                document.getElementById('filterMaxPrice').value = params.maxPrice;
+            }
+            if (params.year) {
+                document.getElementById('filterYear').value = params.year;
+            }
+            if (params.condition) {
+                document.getElementById('filterCondition').value = params.condition;
+            }
+        }
+
+        function getFilterCriteria() {
+            return {
+                keyword: document.getElementById('searchKeyword').value.trim(),
+                brand: document.getElementById('filterBrand').value,
+                minPrice: document.getElementById('filterMinPrice').value,
+                maxPrice: document.getElementById('filterMaxPrice').value,
+                year: document.getElementById('filterYear').value,
+                condition: document.getElementById('filterCondition').value
+            };
+        }
+
+        function performSearch() {
+            const criteria = getFilterCriteria();
+            allFilteredCars = SearchModule.searchCars(criteria);
+            currentPage = 1;
+            renderResults();
+        }
+
+        function applyFilters() {
+            performSearch();
+        }
+
+        function clearFilters() {
+            document.getElementById('searchKeyword').value = '';
+            document.getElementById('filterBrand').value = 'all';
+            document.getElementById('filterMinPrice').value = '';
+            document.getElementById('filterMaxPrice').value = '';
+            document.getElementById('filterYear').value = 'all';
+            document.getElementById('filterCondition').value = 'all';
+            performSearch();
+        }
+
+        function renderResults() {
+            const container = document.getElementById('carsContainer');
+            const countElement = document.getElementById('resultsCount');
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const carsToShow = allFilteredCars.slice(startIndex, endIndex);
+
+            countElement.textContent = `Found ${allFilteredCars.length} vehicles`;
+
+            if (allFilteredCars.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results" style="grid-column: 1 / -1;">
+                        <h3>No vehicles found</h3>
+                        <p>Try adjusting your filters or search criteria</p>
+                        <button class="btn btn-primary" onclick="clearFilters()">Clear All Filters</button>
+                    </div>
+                `;
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = carsToShow.map(car => CarModule.renderCarCard(car)).join('');
+
+            renderPagination();
+        }
+
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            const totalPages = Math.ceil(allFilteredCars.length / ITEMS_PER_PAGE);
+
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            html += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>Prev</button>`;
+
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+
+            if (startPage > 1) {
+                html += `<button onclick="goToPage(1)">1</button>`;
+                if (startPage > 2) {
+                    html += `<span style="padding: 0.5rem;">...</span>`;
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button onclick="goToPage(${i})" class="${i === currentPage ? 'active' : ''}">${i}</button>`;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    html += `<span style="padding: 0.5rem;">...</span>`;
+                }
+                html += `<button onclick="goToPage(${totalPages})">${totalPages}</button>`;
+            }
+
+            html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+
+            pagination.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(allFilteredCars.length / ITEMS_PER_PAGE);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderResults();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('searchKeyword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        document.getElementById('searchKeyword').addEventListener('input', MainModule.debounce(performSearch, 500));
+
+        function toggleMobileMenu() {
+            const menu = document.querySelector('.navbar-menu');
+            menu.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
