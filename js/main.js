@@ -1,4 +1,3 @@
-// 核心功能模块
 const MainModule = {
     STORAGE_KEYS: {
         USERS: 'used_car_users',
@@ -74,7 +73,7 @@ const MainModule = {
                     price: 28.5,
                     condition: 'excellent',
                     description: 'Excellent condition, low mileage, full service history. Leather seats, sunroof, parking sensors.',
-                    image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzI1NjNlYiIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+Qk1XPC90ZXh0Pjwvc3ZnPg==',
+                    image: 'images/bmw_3series_320i.jpg',
                     sellerId: 'user_001',
                     createdAt: new Date().toISOString()
                 },
@@ -87,7 +86,7 @@ const MainModule = {
                     price: 32.0,
                     condition: 'good',
                     description: 'Well maintained, automatic transmission, GPS navigation, backup camera.',
-                    image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzY0NzQ4YiIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSI+TVQ8L3RleHQ+PC9zdmc+',
+                    image: 'images/mercedes_c200.jpg',
                     sellerId: 'user_002',
                     createdAt: new Date().toISOString()
                 },
@@ -100,7 +99,7 @@ const MainModule = {
                     price: 35.8,
                     condition: 'excellent',
                     description: 'Like new condition, only 8000km, full options including virtual cockpit.',
-                    image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzIyNjdlZiIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGlpdGU+QVVESSA8L3RleHQ+PC9zdmc+',
+                    image: 'images/audi_a4_40tfsi.jpg',
                     sellerId: 'user_001',
                     createdAt: new Date().toISOString()
                 },
@@ -113,7 +112,7 @@ const MainModule = {
                     price: 18.5,
                     condition: 'good',
                     description: 'Reliable family car, automatic, low fuel consumption, recent maintenance.',
-                    image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2VmNjQ0NCIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGlpdGU+VFlPVk9UPC90ZXh0Pjwvc3ZnPg==',
+                    image: 'images/toyota_camry.jpg',
                     sellerId: 'user_003',
                     createdAt: new Date().toISOString()
                 },
@@ -126,7 +125,7 @@ const MainModule = {
                     price: 16.8,
                     condition: 'excellent',
                     description: 'Sporty design, turbo engine, fuel efficient, modern features.',
-                    image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzEwYjk4MSIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGlpdGU+SE9OREE8L3RleHQ+PC9zdmc+',
+                    image: 'images/honda_civic.jpg',
                     sellerId: 'user_002',
                     createdAt: new Date().toISOString()
                 },
@@ -139,7 +138,7 @@ const MainModule = {
                     price: 25.9,
                     condition: 'excellent',
                     description: 'Electric vehicle, autopilot enabled, zero emissions, modern tech.',
-                    image: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iIzI1NjNlYiIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGlpdGU+VEVTTEEgPC90ZXh0Pjwvc3ZnPg==',
+                    image: 'images/tesla_model3.jpg',
                     sellerId: 'user_004',
                     createdAt: new Date().toISOString()
                 }
@@ -270,7 +269,6 @@ const MainModule = {
     }
 };
 
-// 初始化
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = MainModule;
 } else {
