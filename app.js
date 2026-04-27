@@ -1,13 +1,63 @@
 const App = {
     STORAGE_KEYS: {
-        CARS: 'used_car_cars'
+        USERS: 'used_car_users',
+        CARS: 'used_car_cars',
+        CURRENT_USER: 'used_car_current_user'
     },
 
+    API_BASE_URL: '',
+
     init: function() {
+        this.checkAuthStatus();
+        this.initNavigation();
         this.initSampleData();
-        this.loadFeaturedCars();
-        this.loadLatestCars();
-        this.initEventListeners();
+    },
+
+    checkAuthStatus: function() {
+        const currentUser = localStorage.getItem(this.STORAGE_KEYS.CURRENT_USER);
+        this.updateAuthUI(currentUser);
+    },
+
+    updateAuthUI: function(user) {
+        const authButtons = document.querySelector('.navbar-auth');
+        if (!authButtons) return;
+
+        if (user) {
+            const userData = JSON.parse(user);
+            authButtons.innerHTML = `
+                <span style="color: var(--text-primary);">Welcome, ${userData.username}</span>
+                <button class="btn btn-outline" onclick="App.logout()">Logout</button>
+            `;
+        } else {
+            authButtons.innerHTML = `
+                <a href="login.html" class="btn btn-outline">Login</a>
+                <a href="register.html" class="btn btn-primary">Register</a>
+            `;
+        }
+    },
+
+    logout: function() {
+        localStorage.removeItem(this.STORAGE_KEYS.CURRENT_USER);
+        window.location.href = 'index.html';
+    },
+
+    initNavigation: function() {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const navLinks = document.querySelectorAll('.navbar-menu a');
+        navLinks.forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            }
+        });
+
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const navbarMenu = document.querySelector('.navbar-menu');
+        if (mobileMenuBtn && navbarMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                navbarMenu.classList.toggle('active');
+            });
+        }
     },
 
     initSampleData: function() {
@@ -95,16 +145,46 @@ const App = {
             ];
             localStorage.setItem(this.STORAGE_KEYS.CARS, JSON.stringify(sampleCars));
         }
+
+        const users = JSON.parse(localStorage.getItem(this.STORAGE_KEYS.USERS) || '[]');
+        if (users.length === 0) {
+            const sampleUsers = [
+                {
+                    id: 'user_001',
+                    username: 'john_seller',
+                    email: 'john@example.com',
+                    password: 'Test1234',
+                    phone: '13800138000',
+                    createdAt: new Date().toISOString()
+                }
+            ];
+            localStorage.setItem(this.STORAGE_KEYS.USERS, JSON.stringify(sampleUsers));
+        }
     },
 
-    getStorageItem: function(key, defaultValue = null) {
-        try {
-            const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : defaultValue;
-        } catch (e) {
-            console.error('Storage error:', e);
-            return defaultValue;
+    getCurrentUser: function() {
+        const userStr = localStorage.getItem(this.STORAGE_KEYS.CURRENT_USER);
+        return userStr ? JSON.parse(userStr) : null;
+    },
+
+    isLoggedIn: function() {
+        return !!localStorage.getItem(this.STORAGE_KEYS.CURRENT_USER);
+    },
+
+    requireAuth: function() {
+        if (!this.isLoggedIn()) {
+            alert('Please login first!');
+            window.location.href = 'login.html';
+            return false;
         }
+        return true;
+    },
+
+    showAlert: function(message, type = 'success') {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} show`;
+        alertDiv.textContent = message;
+        return alertDiv;
     },
 
     formatPrice: function(price) {
@@ -133,6 +213,92 @@ const App = {
         return classes[condition] || '';
     },
 
+    generateId: function(prefix = 'id') {
+        return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    },
+
+    validateEmail: function(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    },
+
+    validatePhone: function(phone) {
+        const re = /^1[3-9]\d{9}$/;
+        return re.test(phone);
+    },
+
+    validatePassword: function(password) {
+        return password.length >= 8 && /[A-Z]/.test(password) && /[a-z]/.test(password) && /[0-9]/.test(password);
+    },
+
+    validateUsername: function(username) {
+        return /^[a-zA-Z0-9_]{4,20}$/.test(username);
+    },
+
+    validateYear: function(year) {
+        const currentYear = new Date().getFullYear();
+        return year >= 2000 && year <= currentYear;
+    },
+
+    validateMileage: function(mileage) {
+        return mileage > 0 && mileage < 500000;
+    },
+
+    validatePrice: function(price) {
+        return price > 0 && price < 10000;
+    },
+
+    getUrlParams: function() {
+        const params = {};
+        const searchParams = new URLSearchParams(window.location.search);
+        for (const [key, value] of searchParams.entries()) {
+            params[key] = value;
+        }
+        return params;
+    },
+
+    debounce: function(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    },
+
+    setStorageItem: function(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+            return true;
+        } catch (e) {
+            console.error('Storage error:', e);
+            return false;
+        }
+    },
+
+    getStorageItem: function(key, defaultValue = null) {
+        try {
+            const item = localStorage.getItem(key);
+            return item ? JSON.parse(item) : defaultValue;
+        } catch (e) {
+            console.error('Storage error:', e);
+            return defaultValue;
+        }
+    },
+
+    removeStorageItem: function(key) {
+        try {
+            localStorage.removeItem(key);
+            return true;
+        } catch (e) {
+            console.error('Storage error:', e);
+            return false;
+        }
+    },
+
     renderCarCard: function(car) {
         return `
             <div class="car-card fade-in" onclick="window.location.href='car-detail.html?id=${car.id}'">
@@ -153,72 +319,137 @@ const App = {
         `;
     },
 
-    loadFeaturedCars: function() {
+    searchCars: function(criteria = {}) {
+        let cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+
+        if (criteria.keyword) {
+            const keyword = criteria.keyword.toLowerCase();
+            cars = cars.filter(car =>
+                car.name.toLowerCase().includes(keyword) ||
+                car.brand.toLowerCase().includes(keyword) ||
+                car.description.toLowerCase().includes(keyword)
+            );
+        }
+
+        if (criteria.brand && criteria.brand !== 'all') {
+            cars = cars.filter(car => car.brand === criteria.brand);
+        }
+
+        if (criteria.minPrice) {
+            cars = cars.filter(car => car.price >= parseFloat(criteria.minPrice));
+        }
+
+        if (criteria.maxPrice) {
+            cars = cars.filter(car => car.price <= parseFloat(criteria.maxPrice));
+        }
+
+        if (criteria.year && criteria.year !== 'all') {
+            cars = cars.filter(car => car.year.toString() === criteria.year);
+        }
+
+        if (criteria.condition && criteria.condition !== 'all') {
+            cars = cars.filter(car => car.condition === criteria.condition);
+        }
+
+        return cars;
+    },
+
+    getCarById: function(carId) {
         const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
-        const featuredCars = cars.slice(0, 6);
-        const container = document.getElementById('featuredCars');
-
-        if (container) {
-            if (featuredCars.length > 0) {
-                container.innerHTML = featuredCars.map(car => this.renderCarCard(car)).join('');
-            } else {
-                container.innerHTML = '<p class="no-results">No cars available at the moment.</p>';
-            }
-        }
+        return cars.find(car => car.id === carId);
     },
 
-    loadLatestCars: function() {
+    getCarsBySeller: function(sellerId) {
         const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
-        const latestCars = cars.slice(0, 4);
-        const container = document.getElementById('latestCars');
-
-        if (container) {
-            if (latestCars.length > 0) {
-                container.innerHTML = latestCars.map(car => this.renderCarCard(car)).join('');
-            } else {
-                container.innerHTML = '<p class="no-results">No cars available at the moment.</p>';
-            }
-        }
+        return cars.filter(car => car.sellerId === sellerId);
     },
 
-    performHeroSearch: function() {
-        const keyword = document.getElementById('heroSearchInput').value.trim();
-        if (keyword) {
-            window.location.href = `search.html?keyword=${encodeURIComponent(keyword)}`;
-        } else {
-            window.location.href = 'search.html';
-        }
+    addCar: function(carData) {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        const newCar = {
+            ...carData,
+            id: this.generateId('car'),
+            createdAt: new Date().toISOString()
+        };
+        cars.unshift(newCar);
+        this.setStorageItem(this.STORAGE_KEYS.CARS, cars);
+        return newCar;
     },
 
-    initEventListeners: function() {
-        // Search button click event
-        const searchBtn = document.querySelector('.search-box button');
-        if (searchBtn) {
-            searchBtn.addEventListener('click', () => this.performHeroSearch());
+    updateCar: function(carId, carData) {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        const index = cars.findIndex(car => car.id === carId);
+        if (index !== -1) {
+            cars[index] = { ...cars[index], ...carData };
+            this.setStorageItem(this.STORAGE_KEYS.CARS, cars);
+            return cars[index];
         }
+        return null;
+    },
 
-        // Enter key in search input
-        const searchInput = document.getElementById('heroSearchInput');
-        if (searchInput) {
-            searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    this.performHeroSearch();
-                }
-            });
-        }
+    deleteCar: function(carId) {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        const filteredCars = cars.filter(car => car.id !== carId);
+        this.setStorageItem(this.STORAGE_KEYS.CARS, filteredCars);
+        return true;
+    },
 
-        // Mobile menu toggle
-        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
-        if (mobileMenuBtn) {
-            mobileMenuBtn.addEventListener('click', () => {
-                const menu = document.querySelector('.navbar-menu');
-                menu.classList.toggle('active');
-            });
+    registerUser: function(userData) {
+        const users = this.getStorageItem(this.STORAGE_KEYS.USERS, []);
+        const existingUser = users.find(user =>
+            user.email === userData.email || user.username === userData.username
+        );
+        if (existingUser) {
+            return { success: false, message: 'User already exists' };
         }
+        const newUser = {
+            ...userData,
+            id: this.generateId('user'),
+            createdAt: new Date().toISOString()
+        };
+        users.push(newUser);
+        this.setStorageItem(this.STORAGE_KEYS.USERS, users);
+        return { success: true, user: newUser };
+    },
+
+    loginUser: function(emailOrUsername, password) {
+        const users = this.getStorageItem(this.STORAGE_KEYS.USERS, []);
+        const user = users.find(u =>
+            (u.email === emailOrUsername || u.username === emailOrUsername) &&
+            u.password === password
+        );
+        if (user) {
+            const userWithoutPassword = { ...user };
+            delete userWithoutPassword.password;
+            this.setStorageItem(this.STORAGE_KEYS.CURRENT_USER, userWithoutPassword);
+            return { success: true, user: userWithoutPassword };
+        }
+        return { success: false, message: 'Invalid credentials' };
+    },
+
+    getAllBrands: function() {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        const brands = [...new Set(cars.map(car => car.brand))];
+        return brands.sort();
+    },
+
+    getAllYears: function() {
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        const years = [...new Set(cars.map(car => car.year))];
+        return years.sort((a, b) => b - a);
+    },
+
+    getRelatedCars: function(carId, limit = 4) {
+        const currentCar = this.getCarById(carId);
+        if (!currentCar) return [];
+
+        const cars = this.getStorageItem(this.STORAGE_KEYS.CARS, []);
+        return cars
+            .filter(car => car.id !== carId && car.brand === currentCar.brand)
+            .slice(0, limit);
     }
 };
 
-// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     App.init();
 });
